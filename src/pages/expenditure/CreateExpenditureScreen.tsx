@@ -21,9 +21,11 @@ import { ExpenditureProps } from "@/interfaces/expenditure";
 import { INVOICE_DISCOUNT_TYPE_OPTIONS } from "@/interfaces/invoice";
 import { Banknote, Landmark, NotepadText, Smartphone } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const CreateExpenditureScreen = () => {
+  const navigate = useNavigate();
   const { data, isFetching } = useGeneralQuery<any>({
     queryKey: ["expenseTypes"],
     url: "/expense-types",
@@ -79,9 +81,9 @@ const CreateExpenditureScreen = () => {
           break;
       }
     }
-    if(key === "hasDiscount" && !value){
+    if (key === "hasDiscount" && !value) {
       updateFormFieldValue("discount", undefined);
-  }
+    }
     updateFormFieldValue(key, value);
   };
   const handleCheckBoxValueChange = (value: string) => {
@@ -112,6 +114,7 @@ const CreateExpenditureScreen = () => {
           toast.success("Success", {
             description: "Expenditure recorded"
           });
+          navigate("/expenditure");
         }
       }
     );
