@@ -13,7 +13,7 @@ import { productTableFilters, productTableSchema } from "@/tableSchema/products"
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
-import { usePermission } from "@/hooks/usePermission"; // Assuming this hook provides permission checks
+import { usePermission } from "@/hooks/usePermission";
 
 const ProductListsScreen = () => {
   const { removeItemFromList } = useOptimisticUpdates();
@@ -87,17 +87,17 @@ const ProductListsScreen = () => {
     navigate(`/products/${data.id}`);
   }
 
-  return (
-    <DashboardLayout
-      pageTitle="Products List"
-      actionButton={{
+  const actionButton = !canCreateProducts
+    ? undefined
+    : {
         createButton: {
           name: "Create Product",
           onClick: () => navigate("/products/create"),
-          disabled: isFetching || !canCreateProducts // Disable if fetching or user can't create products
+          disabled: isFetching || !canCreateProducts
         }
-      }}
-    >
+      };
+  return (
+    <DashboardLayout pageTitle="Products List" actionButton={actionButton}>
       <Modal
         showModal={modalData.showModal}
         modalTitle={modalData.modalTitle(selectedProduct.name)}

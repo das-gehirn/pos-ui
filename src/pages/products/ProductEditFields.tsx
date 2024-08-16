@@ -15,7 +15,7 @@ import { ProductCodeProps } from "@/interfaces/productCode";
 import { SupplierProps } from "@/interfaces/supplier";
 import SelectField from "@/components/customFields/Select/SelectField";
 import NumberField from "@/components/customFields/input/NumberField";
-import RadioBoxField from "@/components/customFields/combo/RadioBoxField";
+import RadioBoxFieldGroup from "@/components/customFields/combo/RadioBoxFieldGroup";
 import CustomField from "@/components/customFields/input/CustomInput";
 import { DollarSign } from "lucide-react";
 import CheckBoxField from "@/components/customFields/combo/CheckBoxField";
@@ -238,7 +238,7 @@ const ProductEditFields: FC<EditProductFieldsProps> = ({
             <div className="selling-type mb-3">
               <TitleHeader text="Selling Type" />
               <div className="border border-gray-100 rounded-sm p-4 space-y-3">
-                <RadioBoxField
+                <RadioBoxFieldGroup
                   fieldKey="availability"
                   handleFieldChange={handleFormFieldChange}
                   options={[

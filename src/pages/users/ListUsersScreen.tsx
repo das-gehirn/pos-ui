@@ -1,6 +1,6 @@
-import Container from "@/components/Container";
 import Modal from "@/components/Modal";
 import DashboardLayout from "@/components/dashboard/Layout";
+import PageContainer from "@/components/dashboard/PageContainer";
 import Table from "@/components/table/Table";
 import { useSetQueryParam } from "@/components/table/hooks/useSetQueryParam";
 import { useDeleteUserMutation, useFetchUsersQuery } from "@/hooks/request/useUserRequest";
@@ -87,7 +87,7 @@ const ListUsersScreen = () => {
         modalDescription={modalData.modalDescription}
         actionButtons={modalData.actionButtons}
       />
-      <Container className="border border-gray-50">
+      <PageContainer>
         <Table
           columns={usersTableSchema}
           data={data?.data || []}
@@ -104,7 +104,7 @@ const ListUsersScreen = () => {
           showSearchSelection
           tableActions={[{ action: () => {}, label: "Export Users", show: true }]}
         />
-      </Container>
+      </PageContainer>
     </DashboardLayout>
   );
 };

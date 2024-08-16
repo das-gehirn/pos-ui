@@ -29,8 +29,7 @@ const InvoiceListScreen = () => {
   const { data, isFetching } = useGeneralQuery<GetManyProps<InvoiceProps[]>>({
     queryKey: ["invoices", queryObject],
     url: "/invoices",
-    query: queryObject,
-    enabled: !!Object.keys(queryObject).length
+    query: queryObject
   });
 
   const { canCreateInvoice, canDeleteInvoice, canUpdateInvoice, canReadInvoice } = usePermission();
