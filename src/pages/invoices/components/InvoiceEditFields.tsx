@@ -200,7 +200,7 @@ const InvoiceEditFields: FC<InvoiceEditFieldsProps> = ({
         </div>
 
         {false && (
-          <div className="recurring_container flex items-center justify-between gap-x-5">
+          <div className="recurring_container md:flex items-center justify-between gap-x-5">
             <div className="flex-1">
               <CheckBoxField
                 fieldKey="isRecurring"
@@ -278,7 +278,7 @@ const InvoiceEditFields: FC<InvoiceEditFieldsProps> = ({
         )}
 
         {formFields?.items && formFields?.items.length > 0 && (
-          <div className="discount_container flex items-center justify-between gap-x-5">
+          <div className="discount_container md:flex items-center justify-between gap-x-5">
             <div className="flex-1">
               <CheckBoxField
                 fieldKey="hasDiscount"
@@ -306,6 +306,7 @@ const InvoiceEditFields: FC<InvoiceEditFieldsProps> = ({
                     handleInputChange={handleFormFieldChange}
                     label="Discount Value"
                     value={formFields?.discount?.value}
+                    min={0}
                     max={100}
                     disabled={!invoiceIsPaidOrExpired || isFetching || isLoading || disableFields}
                   />

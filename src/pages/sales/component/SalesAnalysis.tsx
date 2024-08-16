@@ -57,15 +57,14 @@ const SalesAnalysis = () => {
     enabled: Boolean(selectedDate),
     query: { date: selectedDate || "" }
   });
-  const { data: som } = useGeneralQuery<GetManyProps<{ name: string; totalQuantity: number; totalPrice: number }>>({
-    queryKey: ["gfdghfgfhgf", selectedDate],
-    url: "/sales/by/cashier",
-    requireAuth: true,
-    enabled: Boolean(selectedDate),
-    query: { date: selectedDate || "" }
-  });
+  // const { data: som } = useGeneralQuery<GetManyProps<{ name: string; totalQuantity: number; totalPrice: number }>>({
+  //   queryKey: ["gfdghfgfhgf", selectedDate],
+  //   url: "/sales/by/cashier",
+  //   requireAuth: true,
+  //   enabled: Boolean(selectedDate),
+  //   query: { date: selectedDate || "" }
+  // });
 
-  console.log({ som });
 
   useEffect(() => {
     if (queryObject && queryObject.year && queryObject.month) {

@@ -19,12 +19,13 @@ import { HandlerProps } from "@/components/customFields/type";
 import { formatCurrency, objectDifference } from "@/helpers";
 import { GENDER_OPTIONS, calculateDiscountAmount, printPDF } from "@/utils";
 import PayNowModal from "./PayNowModal";
-import { pick } from "lodash";
+import { pick, set } from "lodash";
 import { toast } from "sonner";
 import HoldItem from "./HoldItem";
 import CheckBoxField from "@/components/customFields/combo/CheckBoxField";
 import NumberField from "@/components/customFields/input/NumberField";
 import { INVOICE_DISCOUNT_TYPE_OPTIONS } from "@/interfaces/invoice";
+import { addMonths } from "date-fns";
 
 type ModalType = "payment" | "customer" | "invoicing";
 type ModalObjectMapperProps = {
@@ -105,7 +106,10 @@ const OrderDetails = () => {
     if (modalType === "payment" && !data.modeOfPayment) {
       data.modeOfPayment = "cash";
     }
-
+    if (modalType === "invoicing") {
+      set(data, "invoiceDate", new Date());
+      set(data, "dueDate", addMonths(new Date(), 1));
+    }
     const payload =
       modalType === "customer" ? (objectDifference(defaultCustomer(), formValues) as CustomerProps) : data;
 
@@ -117,6 +121,7 @@ const OrderDetails = () => {
           if (modalType === "payment") {
             printPDF(data?.data?.response);
           }
+
           resetState();
           toast.success("Success", {
             description: modalConfig.successMessage

@@ -52,7 +52,8 @@ export const PERMISSIONS_LIST: PermissionString[] = [
   "inventory",
   "invoice",
   "customers",
-  "sales"
+  "sales",
+  "expenditures"
 ];
 
 export const PERMISSIONS = structurePermissionsObject(PERMISSIONS_LIST);

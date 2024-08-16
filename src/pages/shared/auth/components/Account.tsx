@@ -26,7 +26,6 @@ const Account: FC<AccountProps> = ({ user, isLoading, mutate }) => {
   const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(user);
   const payload = objectDifference(user, formValues);
   const onsubmitHandler = () => {
-    console.log(payload);
 
     mutate({ payload });
   };

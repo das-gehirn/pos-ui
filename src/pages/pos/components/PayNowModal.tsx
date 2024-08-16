@@ -80,22 +80,15 @@ const PayNowModal: FC<PayNowProps> = ({ customers }) => {
             <TabsTrigger value="bank">Bank</TabsTrigger>
             <TabsTrigger value="cheque">Cheque</TabsTrigger>
           </TabsList>
-          <TabsContent value="cash">
-            <NumberField
-              handleInputChange={handleFieldChange}
-              fieldKey="amountPaid"
-              label="Amount paid"
-              value={state.amountPaid}
-            />
-          </TabsContent>
+          <NumberField
+            handleInputChange={handleFieldChange}
+            fieldKey="amountPaid"
+            label="Amount paid"
+            value={state.amountPaid}
+          />
+          <TabsContent value="cash"></TabsContent>
 
           <TabsContent value="mobile money">
-            <NumberField
-              handleInputChange={handleFieldChange}
-              fieldKey="amountPaid"
-              label="Amount paid"
-              value={state.amountPaid}
-            />
             <SelectField
               fieldKey="mobileMoneyPayment.networkType"
               options={TELECOM_NAME_OPTIONS}
@@ -120,12 +113,6 @@ const PayNowModal: FC<PayNowProps> = ({ customers }) => {
           </TabsContent>
 
           <TabsContent value="bank">
-            <NumberField
-              handleInputChange={handleFieldChange}
-              fieldKey="amountPaid"
-              label="Amount paid"
-              value={state.amountPaid}
-            />
             <SelectField
               fieldKey="bankPayment.bankName"
               options={BANK_NAME_OPTIONS}
@@ -133,6 +120,12 @@ const PayNowModal: FC<PayNowProps> = ({ customers }) => {
               selectValue={state?.bankPayment?.bankName}
               onChange={handleFieldChange}
               isSearchable
+            />
+            <InputField
+              fieldKey="bankPayment.branchBranch"
+              handleInputChange={handleFieldChange}
+              label="Bank branch"
+              value={state?.bankPayment?.bankBranch}
             />
             <InputField
               fieldKey="bankPayment.bankAccountNumber"
@@ -148,11 +141,12 @@ const PayNowModal: FC<PayNowProps> = ({ customers }) => {
             />
           </TabsContent>
           <TabsContent value="cheque">
-            <NumberField
+            <InputField
+              fieldKey="chequePayment.chequeNumber"
               handleInputChange={handleFieldChange}
-              fieldKey="amountPaid"
-              label="Amount paid"
-              value={state.amountPaid}
+              label="Cheque Number"
+              maxLength={10}
+              value={state?.chequePayment?.chequeNumber}
             />
             <SelectField
               fieldKey="chequePayment.bankName"
@@ -163,11 +157,10 @@ const PayNowModal: FC<PayNowProps> = ({ customers }) => {
               isSearchable
             />
             <InputField
-              fieldKey="chequePayment.chequeNumber"
+              fieldKey="bankPayment.branchBranch"
               handleInputChange={handleFieldChange}
-              label="Cheque Number"
-              maxLength={10}
-              value={state?.chequePayment?.chequeNumber}
+              label="Bank branch"
+              value={state?.bankPayment?.bankBranch}
             />
           </TabsContent>
         </Tabs>

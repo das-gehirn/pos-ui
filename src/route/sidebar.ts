@@ -276,27 +276,23 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         title: "Expenditure",
         url: "/",
         icon: MinusCircle,
-        isDisabled: true,
+        isDisabled: false,
+        isVisible: hasPermission(userPermission, ["expenditures", "read"]),
         subLinks: [
           {
             title: "Add Expense",
-            url: "/users/create"
+            url: "/expenditure/create",
+            isVisible: hasPermission(userPermission, ["expenditures", "create"])
           },
           {
             title: "Expense List",
-            url: "/users"
-          },
-          {
-            title: "Add Category",
-            url: "/users"
-          },
-          {
-            title: "Category List",
-            url: "/users"
+            url: "/expenditure",
+            isVisible: hasPermission(userPermission, ["expenditures", "read"])
           },
           {
             title: "Summary",
-            url: "/users"
+            url: "/expenditure/summary",
+            isDisabled: true
           }
         ]
       },

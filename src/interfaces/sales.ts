@@ -1,5 +1,6 @@
 import { DefaultPluginProps } from ".";
 import { CustomerProps } from "./customer";
+import { NetworkType } from "./expenditure";
 import { InvoiceProps } from "./invoice";
 import { UserProps } from "./user";
 
@@ -35,16 +36,18 @@ export interface SalesProps extends DefaultPluginProps {
 }
 
 export type MobileMoneyPaymentProps = {
-  networkType: "MTN" | "VODAFONE" | "AIRTEL TIGO";
+  networkType: NetworkType;
   mobileMoneyNumber: string;
   transactionId: string;
 };
 export type BankPaymentProps = {
   bankName: string;
   bankAccountNumber: number;
+  bankBranch: string;
   transactionNumber: string;
 };
 export type ChequePaymentProps = {
   bankName: string;
   chequeNumber: number;
+  bankBranch: string;
 };

@@ -70,13 +70,13 @@ export function cleanObject(obj: Record<string, any>) {
     (result: Record<string, any>, value, key) => {
       if (value !== undefined && value !== null) {
         if (Array.isArray(value) && value.length > 0) {
-          // If it's a non-empty array, convert it to a comma-separated string
+          // Convert non-empty arrays to a comma-separated string
           result[key] = value.join(",");
         } else if (typeof value === "string" && value !== "") {
-          // If it's a non-empty string, include it
+          // Include non-empty strings
           result[key] = value;
         } else if (typeof value === "number") {
-          // If it's a number, include it
+          // Include numbers
           result[key] = value;
         }
       }
@@ -98,7 +98,7 @@ export function objectDifference(
 
   // Helper function to find array differences
   const arrayDifference = (baseArray: any[], compareArray: any[]) => {
-    return compareArray.filter((item) => !baseArray.includes(item));
+    return JSON.stringify(compareArray) !== JSON.stringify(baseArray);
   };
 
   // Iterate over the keys of baseObject
@@ -110,7 +110,7 @@ export function objectDifference(
       if (Array.isArray(baseValue) && Array.isArray(compareValue)) {
         // Handle arrays with more granular comparison
         const diffArray = arrayDifference(baseValue, compareValue);
-        if (diffArray.length > 0) {
+        if (diffArray) {
           diff[key] = compareValue;
         }
       } else if (
@@ -125,6 +125,7 @@ export function objectDifference(
           diff[key] = nestedDiff;
         }
       } else if (baseValue !== compareValue) {
+        // Handle primitive values, null, NaN, etc.
         if (
           !(baseValue === "" && compareValue === "") &&
           !(baseValue == null && compareValue == null) &&
@@ -139,6 +140,7 @@ export function objectDifference(
         }
       }
     } else {
+      // If the key is missing in `objectToCompare`, keep the original value
       diff[key] = baseValue;
     }
   }

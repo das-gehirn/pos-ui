@@ -15,7 +15,6 @@ interface InvoiceItemProps {
 const InvoiceItem: FC<InvoiceItemProps> = ({ item, handleInvoiceItemRemove, id, showDelete = true }) => {
   const totalPrice = item.quantity * item.amount;
   const handleIteRemove = () => {
-    console.log(id, handleInvoiceItemRemove);
     if (handleInvoiceItemRemove) {
       handleInvoiceItemRemove(id);
     }

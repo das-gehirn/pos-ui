@@ -37,6 +37,7 @@ import {
   StoreInformationProps
 } from "@/interfaces/settings";
 import { InvoiceProps } from "@/interfaces/invoice";
+import { ExpenditureProps } from "@/interfaces/expenditure";
 
 export const mopArr: MOP[] = ["cash", "mobile money", "bank", "cheque"];
 export const defaultPlugin: DefaultPluginProps = {
@@ -464,5 +465,33 @@ export const invoiceDefault: () => InvoiceProps = () => {
     note: "",
     customerData: undefined,
     createdByData: undefined
+  };
+};
+export const expenditureDefault: () => ExpenditureProps = () => {
+  return {
+    ...defaultPlugin,
+    item: "",
+    itemId: undefined,
+    quantity: 0,
+    discount: undefined,
+    hasDiscount: false,
+    pricePerQuantity: 0,
+    description: "",
+    modeOfPayment: undefined,
+    expenseHead: undefined,
+    subExpense: undefined,
+    receiptNumber: "",
+    hasReceipt: false,
+    bankAccountNumber: undefined,
+    type: undefined,
+    bankBranch: undefined,
+    bankName: undefined,
+    warehouseId: "",
+    chequeNumber: undefined,
+    mobileMoneyNumber: undefined,
+    networkType: undefined,
+    transactionId: undefined,
+    transactionNumber: undefined,
+    accountId: ""
   };
 };

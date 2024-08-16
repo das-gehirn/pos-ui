@@ -5,7 +5,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { OptionsProps } from "@/interfaces";
 import InputError from "../input/InputError";
 
-interface RadioBoxFieldProps {
+interface RadioBoxFieldGroupProps {
   isRequired?: boolean;
   id?: string;
   description?: string;
@@ -16,7 +16,7 @@ interface RadioBoxFieldProps {
   errorMessage?: string;
   disabled?: boolean;
 }
-const RadioBoxField: FC<RadioBoxFieldProps> = ({
+const RadioBoxFieldGroup: FC<RadioBoxFieldGroupProps> = ({
   value,
   isRequired,
   id,
@@ -65,4 +65,4 @@ const RadioBoxField: FC<RadioBoxFieldProps> = ({
   );
 };
 
-export default RadioBoxField;
+export default RadioBoxFieldGroup;

@@ -16,8 +16,9 @@ interface SalesReportProps {
   filters?: DataFilterProps[];
   isTodayReport?: boolean;
   isAdmin?: boolean;
+  showSearch?: boolean;
 }
-const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin }) => {
+const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin, showSearch = true }) => {
   const [printLoading, setPrintLoading] = useState(false);
   const { queryObject } = useSetQueryParam();
   const navigate = useNavigate();
@@ -65,12 +66,12 @@ const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin }) => {
   return (
     <>
       {/* {isTodayReport && ( */}
-        <div className="flex mb-5 justify-end">
-          <h1>
-            <span>Total Sales: </span>
-            <span className="font-bold">{formatCurrency({ value: (data as any)?.totalAmount })}</span>
-          </h1>
-        </div>
+      <div className="flex mb-5 justify-end">
+        <h1>
+          <span>Total Sales: </span>
+          <span className="font-bold">{formatCurrency({ value: (data as any)?.totalAmount })}</span>
+        </h1>
+      </div>
       {/* )} */}
       <Table
         columns={salesTableSchema({ isAdmin })}
@@ -87,6 +88,7 @@ const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin }) => {
           { label: "Teller", value: "createdBy" }
         ]}
         handleRowClick={(data: Record<string, any>) => navigate(`/sales/${data._id}`)}
+        showSearch={showSearch}
       />
     </>
   );
