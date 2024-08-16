@@ -64,7 +64,7 @@ const ExpenditureListViewScreen = () => {
     ] as ModalActionButtonProps[]
   };
   function handleEditRowActionClick(data: Record<string, any>) {
-    navigate(`/expenditure/${data.id}`);
+    navigate(`/expenditure/${data.id}/update`);
   }
   const rowActions = [
     {

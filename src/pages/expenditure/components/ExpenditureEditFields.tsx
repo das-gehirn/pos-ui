@@ -1,127 +1,53 @@
-// import FileDropzone from "@/components/FileDropzone";
 import PrimaryButton from "@/components/PrimaryButton";
 import SelectField from "@/components/customFields/Select/SelectField";
 import CheckBoxField from "@/components/customFields/combo/CheckBoxField";
 import InputField from "@/components/customFields/input/InputField";
 import NumberField from "@/components/customFields/input/NumberField";
 import TextAreaField from "@/components/customFields/input/TextAreaField";
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { HandlerProps } from "@/components/customFields/type";
 import DashboardLayout from "@/components/dashboard/Layout";
 import PageContainer from "@/components/dashboard/PageContainer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { ExpenditureProps } from "@/interfaces/expenditure";
+import { FC } from "react";
+import { Banknote, Landmark, NotepadText, Smartphone } from "lucide-react";
 import { Label } from "@/components/ui/label";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
-import { expenditureDefault } from "@/defaults";
-import { BANK_NAME_OPTIONS, TELECOM_NAME_OPTIONS, formatCurrency, objectDifference } from "@/helpers";
-import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
-import { useGeneralQuery } from "@/hooks/request/useGeneralQuery";
-import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
-import { OptionsProps } from "@/interfaces";
-import { ExpenditureProps } from "@/interfaces/expenditure";
+import { BANK_NAME_OPTIONS, TELECOM_NAME_OPTIONS, formatCurrency } from "@/helpers";
 import { INVOICE_DISCOUNT_TYPE_OPTIONS } from "@/interfaces/invoice";
-import { Banknote, Landmark, NotepadText, Smartphone } from "lucide-react";
-import { useState } from "react";
-import { toast } from "sonner";
+import { OptionsProps } from "@/interfaces";
 
-const CreateExpenditureScreen = () => {
-  const { data, isFetching } = useGeneralQuery<any>({
-    queryKey: ["expenseTypes"],
-    url: "/expense-types",
-    enabled: true,
-    query: { deleted: false },
-    staleTime: 300000
-  });
-  const { isPending, mutate } = useGeneralMutation<ExpenditureProps>({
-    mutationKey: ["recordExpenditure"],
-    url: "/expenditures",
-    httpMethod: "post"
-  });
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(expenditureDefault());
-  const [subExpenseType, setSubExpenseType] = useState<any[]>([]);
-
-  const resetKeys = (keys: string[]) => {
-    for (const key of keys) {
-      updateFormFieldValue(key, undefined);
-    }
-  };
-  const formFieldChangeHandler = (props: HandlerProps) => {
-    const { key, value } = props;
-
-    if (key === "expenseHead") {
-      const expenseHead = data?.data.find((d: any) => d._id === value) || {};
-      setSubExpenseType(expenseHead?.subExpenses);
-    }
-
-    if (key === "modeOfPayment") {
-      switch (value) {
-        case "cash":
-          resetKeys([
-            "mobileMoneyNumber",
-            "chequeNumber",
-            "bankName",
-            "bankAccountNumber",
-            "transactionId",
-            "networkType",
-            "bankBranch"
-          ]);
-          break;
-        case "mobile money":
-          resetKeys(["chequeNumber", "bankName", "bankAccountNumber", "bankBranch", "transactionNumber"]);
-          break;
-        case "bank":
-          resetKeys(["chequeNumber", "mobileMoneyNumber", "transactionId", "networkType"]);
-          break;
-        case "cheque":
-          resetKeys(["mobileMoneyNumber", "bankAccountNumber", "transactionId", "networkType", "transactionNumber"]);
-          break;
-
-        default:
-          break;
-      }
-    }
-    if(key === "hasDiscount" && !value){
-      updateFormFieldValue("discount", undefined);
-  }
-    updateFormFieldValue(key, value);
-  };
+interface ExpenditureEditFieldsProps {
+  buttonTitle: string;
+  formValues?: ExpenditureProps;
+  onsubmitHandler: () => void;
+  formFieldChangeHandler: (data: HandlerProps) => void;
+  isLoading?: boolean;
+  pageTitle: string;
+  disabledButton?: boolean;
+  pageDescription: string;
+  isSubmitting?: boolean;
+  expenseOptions: OptionsProps[];
+  subExpenseOptions: OptionsProps[];
+}
+const ExpenditureEditFields: FC<ExpenditureEditFieldsProps> = ({
+  buttonTitle,
+  formValues,
+  formFieldChangeHandler,
+  onsubmitHandler,
+  pageDescription,
+  pageTitle,
+  disabledButton,
+  isLoading,
+  isSubmitting,
+  expenseOptions,
+  subExpenseOptions
+}) => {
   const handleCheckBoxValueChange = (value: string) => {
     formFieldChangeHandler({ value, key: "modeOfPayment" });
   };
-
-  const expenseOptions: OptionsProps[] =
-    data?.data.map((d: any) => {
-      return {
-        label: d.title,
-        value: d._id
-      };
-    }) || [];
-  const subExpenseOptions: OptionsProps[] =
-    subExpenseType.map((d: any) => {
-      return {
-        label: d.title,
-        value: d._id
-      };
-    }) || [];
-
-  const payload = objectDifference(expenditureDefault(), formValues) as ExpenditureProps;
-  const handleExpenditureSubmit = () => {
-    mutate(
-      { payload },
-      {
-        onSuccess() {
-          toast.success("Success", {
-            description: "Expenditure recorded"
-          });
-        }
-      }
-    );
-  };
   return (
-    <DashboardLayout
-      pageTitle="Create Expenditure"
-      pageDescription="Fill the form to create an expenditure"
-      isLoading={isFetching}
-    >
+    <DashboardLayout pageTitle={pageTitle} pageDescription={pageDescription} isLoading={isLoading}>
       <PageContainer>
         <h1 className="text-xl">Expenditure information</h1>
         <TextAreaField
@@ -152,7 +78,8 @@ const CreateExpenditureScreen = () => {
             <CardDescription>Select a new payment method.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6">
-            <RadioGroup className="grid md:grid-cols-2 lg:grid-cols-4 gap-4" onValueChange={handleCheckBoxValueChange}>
+            {formValues?.modeOfPayment}
+            <RadioGroup className="grid md:grid-cols-2 lg:grid-cols-4 gap-4" onValueChange={handleCheckBoxValueChange} value={formValues?.modeOfPayment}>
               <div>
                 <RadioGroupItem value="cash" id="cash" className="peer sr-only" aria-label="Cash" />
                 <Label
@@ -285,13 +212,16 @@ const CreateExpenditureScreen = () => {
         <div className="flex gap-x-5 flex-wrap">
           <CheckBoxField
             label={"Check if expenditure has discount"}
-            value={formValues?.hasDiscount}
             handleFieldChange={formFieldChangeHandler}
             fieldKey="hasDiscount"
+            name="hasDiscount"
+            value={formValues?.hasDiscount}
+            checked={formValues?.hasDiscount}
           />
           <CheckBoxField
             label={"Check if expenditure has receipt"}
             value={formValues?.hasReceipt}
+            checked={formValues?.hasReceipt}
             handleFieldChange={formFieldChangeHandler}
             fieldKey="hasReceipt"
           />
@@ -350,11 +280,11 @@ const CreateExpenditureScreen = () => {
           />
         </div>
         {/* {formValues?.hasReceipt && (
-          <div className="space-y-2">
-            <Label>Receipt Image</Label>
-            <FileDropzone onChange={() => {}} />
-          </div>
-        )} */}
+      <div className="space-y-2">
+        <Label>Receipt Image</Label>
+        <FileDropzone onChange={() => {}} />
+      </div>
+    )} */}
         <div>
           <TextAreaField
             handleInputChange={formFieldChangeHandler}
@@ -366,16 +296,16 @@ const CreateExpenditureScreen = () => {
         <h1 className="my-4">
           Total Amount:{" "}
           <span className="font-bold">
-            {formatCurrency({ value: formValues?.quantity * formValues?.pricePerQuantity || 0 })}
+            {formatCurrency({ value: (formValues?.quantity || 0) * (formValues?.pricePerQuantity || 0) || 0 })}
           </span>
         </h1>
         <div className="flex items-end justify-end">
           <PrimaryButton
-            text="Record"
+            text={buttonTitle}
             className="w-1/3"
-            onClick={handleExpenditureSubmit}
-            disabled={isFetching || isPending}
-            loading={isPending}
+            onClick={onsubmitHandler}
+            disabled={isLoading || disabledButton}
+            loading={isSubmitting}
           />
         </div>
       </PageContainer>
@@ -383,4 +313,4 @@ const CreateExpenditureScreen = () => {
   );
 };
 
-export default CreateExpenditureScreen;
+export default ExpenditureEditFields;
