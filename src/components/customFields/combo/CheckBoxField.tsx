@@ -11,6 +11,7 @@ interface CheckBoxFieldProps extends CheckboxProps {
   handleFieldChange?: (data: HandlerProps) => void;
   fieldKey?: string;
 }
+
 const CheckBoxField: FC<CheckBoxFieldProps> = ({
   value,
   id,
@@ -21,21 +22,20 @@ const CheckBoxField: FC<CheckBoxFieldProps> = ({
   fieldKey,
   ...props
 }) => {
-  const handleOnChange = (e: any) => {
+  const handleOnChange = (checked: boolean) => {
     if (handleFieldChange && fieldKey) {
-      handleFieldChange({ key: fieldKey, value: e });
+      handleFieldChange({ key: fieldKey, value: checked });
     }
   };
+
   return (
-    <div className="flex items-center  gap-4">
+    <div className="flex items-center gap-4">
       <Checkbox
         id={fieldKey}
-        value={value}
+        checked={!!value}  // Controlled via the value prop
         name={name}
         {...props}
         onCheckedChange={handleOnChange}
-        defaultValue={value}
-        defaultChecked={!!value}
       />
       {label && <InputLabel id={id || fieldKey} required={isRequired || false} label={label} />}
     </div>
