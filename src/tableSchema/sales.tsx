@@ -7,7 +7,7 @@ import { DataFilterProps } from "@/components/table/type";
 import { mopArr } from "@/defaults";
 import { Calendar, HandCoins } from "lucide-react";
 import { format } from "date-fns";
-const MOP_OPTIONS = mopArr.map((mop) => {
+export const MOP_OPTIONS = mopArr.map((mop) => {
   return {
     label: startCase(mop),
     value: mop

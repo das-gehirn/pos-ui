@@ -43,7 +43,7 @@ const CreateExpenditureScreen = () => {
 
   const resetKeys = (keys: string[]) => {
     for (const key of keys) {
-      updateFormFieldValue(key, undefined);
+      updateFormFieldValue(key, null);
     }
   };
   const formFieldChangeHandler = (props: HandlerProps) => {
@@ -82,7 +82,7 @@ const CreateExpenditureScreen = () => {
       }
     }
     if (key === "hasDiscount" && !value) {
-      updateFormFieldValue("discount", undefined);
+      updateFormFieldValue("discount", null);
     }
     updateFormFieldValue(key, value);
   };

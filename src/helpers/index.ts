@@ -121,6 +121,7 @@ export function objectDifference(
       ) {
         // Recursively compare nested objects
         const nestedDiff = objectDifference(baseValue, compareValue);
+        console.info({ nestedDiff });
         if (!isEmpty(nestedDiff)) {
           diff[key] = nestedDiff;
         }

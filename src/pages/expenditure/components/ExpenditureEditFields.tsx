@@ -16,6 +16,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { BANK_NAME_OPTIONS, TELECOM_NAME_OPTIONS, formatCurrency } from "@/helpers";
 import { INVOICE_DISCOUNT_TYPE_OPTIONS } from "@/interfaces/invoice";
 import { OptionsProps } from "@/interfaces";
+import { calculateDiscountAmount } from "@/utils";
 
 interface ExpenditureEditFieldsProps {
   buttonTitle: string;
@@ -46,6 +47,12 @@ const ExpenditureEditFields: FC<ExpenditureEditFieldsProps> = ({
   const handleCheckBoxValueChange = (value: string) => {
     formFieldChangeHandler({ value, key: "modeOfPayment" });
   };
+  const discountValue = formValues?.discount?.value || 0;
+  const discountType = formValues?.discount?.type;
+  const discountText = discountType === "percentage" ? `${discountValue}%` : discountValue;
+  const totalAmount = (formValues?.quantity || 0) * (formValues?.pricePerQuantity || 0) || 0;
+  const calculateDiscounted = calculateDiscountAmount(totalAmount, formValues?.discount);
+
   return (
     <DashboardLayout pageTitle={pageTitle} pageDescription={pageDescription} isLoading={isLoading}>
       <PageContainer>
@@ -79,7 +86,11 @@ const ExpenditureEditFields: FC<ExpenditureEditFieldsProps> = ({
           </CardHeader>
           <CardContent className="grid gap-6">
             {formValues?.modeOfPayment}
-            <RadioGroup className="grid md:grid-cols-2 lg:grid-cols-4 gap-4" onValueChange={handleCheckBoxValueChange} value={formValues?.modeOfPayment}>
+            <RadioGroup
+              className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"
+              onValueChange={handleCheckBoxValueChange}
+              value={formValues?.modeOfPayment}
+            >
               <div>
                 <RadioGroupItem value="cash" id="cash" className="peer sr-only" aria-label="Cash" />
                 <Label
@@ -293,11 +304,15 @@ const ExpenditureEditFields: FC<ExpenditureEditFieldsProps> = ({
             value={formValues?.description}
           />
         </div>
-        <h1 className="my-4">
-          Total Amount:{" "}
-          <span className="font-bold">
-            {formatCurrency({ value: (formValues?.quantity || 0) * (formValues?.pricePerQuantity || 0) || 0 })}
-          </span>
+        <h1 className="mt-4">
+          Total Amount:
+          <span className="font-medium">{formatCurrency({ value: totalAmount })}</span>
+        </h1>
+        <h1 className="!mt-0.5">
+          Discount({discountText})<span className="font-medium">{formatCurrency({ value: calculateDiscounted })}</span>
+        </h1>
+        <h1 className="!mt-0.5">
+          Sub Total<span className="font-medium">{formatCurrency({ value: totalAmount - calculateDiscounted })}</span>
         </h1>
         <div className="flex items-end justify-end">
           <PrimaryButton

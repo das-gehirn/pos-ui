@@ -34,4 +34,5 @@ export interface ExpenditureProps extends DefaultPluginProps {
   createdByData?: UserProps;
   expenseHeadData?: ExpenseTypeProps;
   subExpenseHeadData?: SubExpenseTypeProps;
+  totalAmount?: number;
 }
