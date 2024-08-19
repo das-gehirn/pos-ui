@@ -78,7 +78,6 @@ const UpdateExpenditureScreen = () => {
       }
     }
     if (key === "hasDiscount" && !value) {
-      console.info(key, value);
       updateFormFieldValue("discount", null);
     }
     updateFormFieldValue(key, value);

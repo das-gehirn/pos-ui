@@ -38,6 +38,7 @@ import {
 } from "@/interfaces/settings";
 import { InvoiceProps } from "@/interfaces/invoice";
 import { ExpenditureProps } from "@/interfaces/expenditure";
+import { StockCreditorPaymentProps } from "@/interfaces/stockPayments";
 
 export const mopArr: MOP[] = ["cash", "mobile money", "bank", "cheque"];
 export const defaultPlugin: DefaultPluginProps = {
@@ -206,6 +207,29 @@ export const defaultCustomer = (): CustomerProps => {
   };
 };
 
+export const defaultStockCreditorPayment = (): StockCreditorPaymentProps => {
+  return {
+    ...defaultPlugin,
+    _id: undefined,
+    amountPaid: 0,
+    modeOfPayment: undefined,
+    stockId: "",
+    supplierId: "",
+    accountId: "",
+    warehouseId: "",
+    receiptNumber: "",
+    transactionNumber: "",
+    bankAccountNumber: "",
+    bankName: "",
+    bankBranch: "",
+    mobileMoneyNumber: "",
+    chequeNumber: undefined,
+    transactionId: "",
+    networkType: undefined,
+    supplier: "",
+    remarks: ""
+  };
+};
 // Default values for nested interfaces
 const defaultPasswordPolicy: PasswordPolicyProps = {
   minLength: 8,

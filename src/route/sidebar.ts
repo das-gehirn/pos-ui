@@ -237,6 +237,12 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
                   isDisabled: false
                 },
                 {
+                  title: "Stock Creditors",
+                  url: "/stocks/creditors",
+                  isDisabled: false,
+                  isVisible: hasPermission(userPermission, ["stockCreditors", "read"])
+                },
+                {
                   title: "Profit/Loss",
                   url: "/users/create",
                   isDisabled: true

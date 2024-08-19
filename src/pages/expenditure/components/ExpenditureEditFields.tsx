@@ -85,7 +85,6 @@ const ExpenditureEditFields: FC<ExpenditureEditFieldsProps> = ({
             <CardDescription>Select a new payment method.</CardDescription>
           </CardHeader>
           <CardContent className="grid gap-6">
-            {formValues?.modeOfPayment}
             <RadioGroup
               className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"
               onValueChange={handleCheckBoxValueChange}
