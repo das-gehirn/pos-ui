@@ -223,11 +223,13 @@ export const defaultStockCreditorPayment = (): StockCreditorPaymentProps => {
     bankName: "",
     bankBranch: "",
     mobileMoneyNumber: "",
-    chequeNumber: undefined,
+    chequeNumber: "",
     transactionId: "",
     networkType: undefined,
     supplier: "",
-    remarks: ""
+    remarks: "",
+    hasReceipt: false,
+    creditorId: ""
   };
 };
 // Default values for nested interfaces

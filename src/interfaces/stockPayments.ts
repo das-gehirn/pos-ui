@@ -15,9 +15,11 @@ export interface StockCreditorPaymentProps extends DefaultPluginProps {
   bankName?: string;
   bankBranch?: string;
   mobileMoneyNumber?: string;
-  chequeNumber?: number;
+  chequeNumber?: string;
   transactionId?: string;
   networkType?: NetworkType;
   supplier?: string;
   remarks?: string;
+  hasReceipt?: boolean;
+  creditorId: string;
 }

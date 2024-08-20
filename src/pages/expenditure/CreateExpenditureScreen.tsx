@@ -41,11 +41,6 @@ const CreateExpenditureScreen = () => {
   const { formValues, updateFormFieldValue } = useFormFieldUpdate(expenditureDefault());
   const [subExpenseType, setSubExpenseType] = useState<any[]>([]);
 
-  const resetKeys = (keys: string[]) => {
-    for (const key of keys) {
-      updateFormFieldValue(key, null);
-    }
-  };
   const formFieldChangeHandler = (props: HandlerProps) => {
     const { key, value } = props;
 
@@ -54,33 +49,6 @@ const CreateExpenditureScreen = () => {
       setSubExpenseType(expenseHead?.subExpenses);
     }
 
-    if (key === "modeOfPayment") {
-      switch (value) {
-        case "cash":
-          resetKeys([
-            "mobileMoneyNumber",
-            "chequeNumber",
-            "bankName",
-            "bankAccountNumber",
-            "transactionId",
-            "networkType",
-            "bankBranch"
-          ]);
-          break;
-        case "mobile money":
-          resetKeys(["chequeNumber", "bankName", "bankAccountNumber", "bankBranch", "transactionNumber"]);
-          break;
-        case "bank":
-          resetKeys(["chequeNumber", "mobileMoneyNumber", "transactionId", "networkType"]);
-          break;
-        case "cheque":
-          resetKeys(["mobileMoneyNumber", "bankAccountNumber", "transactionId", "networkType", "transactionNumber"]);
-          break;
-
-        default:
-          break;
-      }
-    }
     if (key === "hasDiscount" && !value) {
       updateFormFieldValue("discount", null);
     }

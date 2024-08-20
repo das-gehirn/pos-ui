@@ -53,7 +53,18 @@ const StockCreditorsList = () => {
     }
   ];
   return (
-    <DashboardLayout pageTitle="Stock Creditors">
+    <DashboardLayout
+      pageTitle="Stock Creditors"
+      isLoading={isFetching}
+      actionButton={{
+        createButton: {
+          name: "Make Payment",
+          onClick: () => {
+            navigate("/pay-stock-creditor");
+          }
+        }
+      }}
+    >
       <PageContainer>
         <Table
           columns={stockCreditorsSchema}

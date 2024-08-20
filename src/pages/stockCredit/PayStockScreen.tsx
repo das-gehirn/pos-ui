@@ -6,24 +6,35 @@ import TextAreaField from "@/components/customFields/input/TextAreaField";
 import { HandlerProps } from "@/components/customFields/type";
 import DashboardLayout from "@/components/dashboard/Layout";
 import PageContainer from "@/components/dashboard/PageContainer";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { defaultStockCreditorPayment } from "@/defaults";
-import { BANK_NAME_OPTIONS, TELECOM_NAME_OPTIONS, formatCurrency } from "@/helpers";
+import { formatCurrency, objectDifference } from "@/helpers";
 import { useGeneralQuery } from "@/hooks/request/useGeneralQuery";
 import { GetManyProps } from "@/hooks/types";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 import { useSetQueryParam } from "@/hooks/useSetQueryParam";
 import { OptionsProps } from "@/interfaces";
 import { StockCreditorProps } from "@/interfaces/stockCreditors";
-import { Banknote, Landmark, NotepadText, Smartphone } from "lucide-react";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import ModeOfPaymentForm from "../expenditure/components/ModeOfPaymentForm";
+import CheckBoxField from "@/components/customFields/combo/CheckBoxField";
+import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
+import { useNavigate } from "react-router-dom";
+import { StockCreditorPaymentProps } from "@/interfaces/stockPayments";
+import { toast } from "sonner";
 
 const PayStockScreen = () => {
+  const defaultObj = defaultStockCreditorPayment();
   const { queryObject } = useSetQueryParam();
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(defaultStockCreditorPayment());
+  const { formValues, updateFormFieldValue } = useFormFieldUpdate(defaultObj);
   const creditId = queryObject?.creditId;
+  const [stockCredit, setStockCredit] = useState<StockCreditorProps>();
+  const navigate = useNavigate();
+
+  const { isPending, mutate } = useGeneralMutation<StockCreditorPaymentProps>({
+    mutationKey: ["stockPayments"],
+    url: "/stock-payments",
+    httpMethod: "post"
+  });
 
   const query = {
     deleted: false
@@ -49,23 +60,46 @@ const PayStockScreen = () => {
   useEffect(() => {
     if (creditId && stockOptions.length) {
       const stock = getStock(creditId);
+      updateFormFieldValue("creditorId", stock?.id);
       updateFormFieldValue("stockId", stock?.stockId);
+      updateFormFieldValue("amountPaid", stock?.amount);
       updateFormFieldValue("supplier", stock?.supplierData?.name);
+      updateFormFieldValue("supplierId", stock?.supplierId);
+      setStockCredit(stock);
     }
-  }, [creditId]);
+  }, [creditId, stockOptions.length]);
 
   const formFieldChangeHandler = (data: HandlerProps) => {
     const { key, value } = data;
 
-    if (key === "stockId") {
+    if (key === "creditorId") {
       const stock = getStock(value);
       updateFormFieldValue("supplier", stock?.supplierData?.name);
+      updateFormFieldValue("amountPaid", stock?.amount);
+      updateFormFieldValue("stockId", stock?.stockId);
+      updateFormFieldValue("supplierId", stock?.supplierId);
+      setStockCredit(stock);
+    }
+    if (key === "hasReceipt" && !value) {
+      updateFormFieldValue("receiptNumber", "");
     }
     updateFormFieldValue(key, value);
   };
-  const handleCheckBoxValueChange = (value: string) => {
-    formFieldChangeHandler({ value, key: "modeOfPayment" });
+  const payload = objectDifference(defaultObj, formValues) as StockCreditorPaymentProps;
+  const handleFormSubmit = () => {
+    mutate(
+      { payload },
+      {
+        onSuccess() {
+          navigate(`/stocks/creditors`);
+          toast.success("Success", {
+            description: "Payment recorded"
+          });
+        }
+      }
+    );
   };
+
   return (
     <DashboardLayout
       pageTitle="Pay Stock creditor"
@@ -76,13 +110,14 @@ const PayStockScreen = () => {
         <div className="flex items-center justify-center flex-col">
           <div className="lg:w-1/2 w-full">
             <div className="flex justify-end">
-              Total Amount: <span className="ml-1 font-medium">{formatCurrency({ value: 0 })}</span>
+              Total Amount:{" "}
+              <span className="ml-1 font-medium">{formatCurrency({ value: stockCredit?.amount || 0 })}</span>
             </div>
             <SelectField
-              fieldKey="stockId"
+              fieldKey="creditorId"
               options={stockOptions}
               label="Stock ID"
-              selectValue={formValues?.stockId}
+              selectValue={formValues?.creditorId}
               onChange={formFieldChangeHandler}
             />
             <InputField
@@ -98,147 +133,43 @@ const PayStockScreen = () => {
               handleInputChange={formFieldChangeHandler}
               value={formValues?.amountPaid}
             />
-            <Card className="border-none shadow-none">
-              <CardHeader>
-                <CardTitle>Payment Method</CardTitle>
-                <CardDescription>Select a new payment method.</CardDescription>
-              </CardHeader>
-              <CardContent className="grid gap-6">
-                <RadioGroup
-                  className="grid md:grid-cols-2 lg:grid-cols-4 gap-4"
-                  onValueChange={handleCheckBoxValueChange}
-                  value={formValues?.modeOfPayment}
-                >
-                  <div>
-                    <RadioGroupItem value="cash" id="cash" className="peer sr-only" aria-label="Cash" />
-                    <Label
-                      htmlFor="cash"
-                      className="flex flex-col items-center gap-y-2 justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary min-h-16"
-                    >
-                      <Banknote />
-                      <span className="text-center">Cash</span>
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem
-                      value="mobile money"
-                      id="mobile-money"
-                      className="peer sr-only"
-                      aria-label="Mobile Money"
-                    />
-                    <Label
-                      htmlFor="mobile-money"
-                      className="flex flex-col items-center gap-y-2 justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary min-h-16"
-                    >
-                      <Smartphone />
-                      <span className="text-center">Momo</span>
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem value="bank" id="bank" className="peer sr-only" aria-label="Bank" />
-                    <Label
-                      htmlFor="bank"
-                      className="flex flex-col items-center gap-y-2 justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary min-h-16"
-                    >
-                      <Landmark />
-                      <span className="text-center">Bank</span>
-                    </Label>
-                  </div>
-                  <div>
-                    <RadioGroupItem value="cheque" id="cheque" className="peer sr-only" aria-label="Cheque" />
-                    <Label
-                      htmlFor="cheque"
-                      className="flex flex-col items-center gap-y-2 justify-between rounded-md border-2 border-muted bg-transparent p-4 hover:bg-accent hover:text-accent-foreground peer-data-[state=checked]:border-primary [&:has([data-state=checked])]:border-primary min-h-16"
-                    >
-                      <NotepadText />
-                      <span className="text-center">Cheque</span>
-                    </Label>
-                  </div>
-                </RadioGroup>
-              </CardContent>
-            </Card>
-
-            <div className="grid lg:grid-cols-3 md:grid-cols-2 gap-x-5 gap-y-5 md:gap-y-0">
-              {formValues?.modeOfPayment === "mobile money" && (
-                <>
-                  <SelectField
-                    fieldKey="networkType"
-                    options={TELECOM_NAME_OPTIONS}
-                    onChange={formFieldChangeHandler}
-                    label="Network type"
-                    selectValue={formValues?.networkType}
-                  />
-                  <InputField
-                    fieldKey="mobileMoneyNumber"
-                    handleInputChange={formFieldChangeHandler}
-                    label="Mobile money number"
-                    value={formValues?.mobileMoneyNumber}
-                  />
-                  <InputField
-                    fieldKey="transactionId"
-                    handleInputChange={formFieldChangeHandler}
-                    label="Transaction ID"
-                    value={formValues?.transactionId}
-                  />
-                </>
-              )}
-              {formValues?.modeOfPayment === "bank" && (
-                <>
-                  <SelectField
-                    fieldKey="bankName"
-                    options={BANK_NAME_OPTIONS}
-                    onChange={formFieldChangeHandler}
-                    label="Bank name"
-                    selectValue={formValues?.bankName}
-                  />
-                  <InputField
-                    fieldKey="bankBranch"
-                    handleInputChange={formFieldChangeHandler}
-                    label="Bank branch"
-                    value={formValues?.bankBranch}
-                  />
-                  <InputField
-                    fieldKey="bankAccountNumber"
-                    handleInputChange={formFieldChangeHandler}
-                    label="Bank account number"
-                    value={formValues?.bankAccountNumber}
-                  />
-
-                  <InputField
-                    fieldKey="transactionNumber"
-                    handleInputChange={formFieldChangeHandler}
-                    label="Bank transaction number"
-                    value={formValues?.transactionNumber}
-                  />
-                </>
-              )}
-
-              {formValues?.modeOfPayment === "cheque" && (
-                <>
-                  <InputField
-                    fieldKey="chequeNumber"
-                    handleInputChange={formFieldChangeHandler}
-                    label="Cheque Number"
-                    value={formValues?.chequeNumber}
-                  />
-                  <SelectField
-                    fieldKey="bankName"
-                    options={BANK_NAME_OPTIONS}
-                    onChange={formFieldChangeHandler}
-                    label="Bank name"
-                    selectValue={formValues?.bankName}
-                  />
-                  <InputField
-                    fieldKey="bankBranch"
-                    handleInputChange={formFieldChangeHandler}
-                    label="Bank branch"
-                    value={formValues?.bankBranch}
-                  />
-                </>
-              )}
-            </div>
-            <TextAreaField label="Remarks" fieldKey="remarks" handleInputChange={formFieldChangeHandler} value={formValues?.remarks} />
-            <PrimaryButton text="Pay" className="mt-5" />
+            <ModeOfPaymentForm
+              formFieldChangeHandler={formFieldChangeHandler}
+              formValues={formValues}
+              spaceSize="sm"
+              disabled={isPending}
+            />
+            <CheckBoxField
+              label={"Check if payment has receipt"}
+              value={formValues?.hasReceipt}
+              checked={formValues?.hasReceipt}
+              handleFieldChange={formFieldChangeHandler}
+              fieldKey="hasReceipt"
+              disabled={isPending}
+            />
+            {formValues?.hasReceipt && (
+              <InputField
+                fieldKey="receiptNumber"
+                handleInputChange={formFieldChangeHandler}
+                label="Receipt Number"
+                value={formValues?.receiptNumber}
+                disabled={isPending}
+              />
+            )}
+            <TextAreaField
+              label="Remarks"
+              fieldKey="remarks"
+              handleInputChange={formFieldChangeHandler}
+              value={formValues?.remarks}
+              disabled={isPending}
+            />
+            <PrimaryButton
+              text="Pay"
+              className="mt-5"
+              onClick={handleFormSubmit}
+              disabled={isPending}
+              loading={isPending}
+            />
           </div>
         </div>
       </PageContainer>
