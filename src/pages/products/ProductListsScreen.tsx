@@ -14,6 +14,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { usePermission } from "@/hooks/usePermission";
+import { formatCurrency } from "@/helpers";
 
 const ProductListsScreen = () => {
   const { removeItemFromList } = useOptimisticUpdates();
@@ -90,12 +91,16 @@ const ProductListsScreen = () => {
   const actionButton = !canCreateProducts
     ? undefined
     : {
-        createButton: {
-          name: "Create Product",
-          onClick: () => navigate("/products/create"),
-          disabled: isFetching || !canCreateProducts
-        }
-      };
+      createButton: {
+        name: "Create Product",
+        onClick: () => navigate("/products/create"),
+        disabled: isFetching || !canCreateProducts
+      }
+    };
+  const products = data?.data || []
+  const stockTotal = products.reduce((prev, current) => {
+    return (current.totalProductPrice || 0) + prev;
+  }, 0)
   return (
     <DashboardLayout pageTitle="Products List" actionButton={actionButton}>
       <Modal
@@ -105,9 +110,12 @@ const ProductListsScreen = () => {
         actionButtons={modalData.actionButtons}
       />
       <Container className="border border-gray-50">
+        <div className="flex items-end justify-end mb-5">
+          <p>Stock Total: <span className="font-medium text-sm">{formatCurrency({ value: stockTotal })}</span></p>
+        </div>
         <Table
           columns={productTableSchema}
-          data={data?.data || []}
+          data={products}
           paginator={data?.paginator || null}
           allowRowSelect
           showSelectColumns
