@@ -121,7 +121,9 @@ const InspectStock: FC<InspectStockProps> = ({ selectedStock, handleDrawerOpen, 
             {selectedStock.status !== "pending" && type !== "view" && "View Stock"}
           </Button>
         </div>
-        {selectedStock.status === "approved" && <Button onClick={handlePayStock}>Pay stock</Button>}
+        {selectedStock.status === "approved" && selectedStock?.creditorData && (
+          <Button onClick={handlePayStock}>Pay stock</Button>
+        )}
       </div>
     </Drawer>
   );
