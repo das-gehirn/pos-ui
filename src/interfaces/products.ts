@@ -60,4 +60,5 @@ export interface ProductProps extends DefaultPluginProps {
   productQuantity?: ProductQuantityProps;
   productUnit?: ProductUnitProps;
   productCode?: ProductCodeProps;
+  totalProductPrice?: number;
 }
