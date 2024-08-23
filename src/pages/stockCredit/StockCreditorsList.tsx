@@ -35,8 +35,9 @@ const StockCreditorsList = () => {
     },
     {
       label: "View Payments",
-      action: () => {
-        alert("View payments is being worked on");
+      action: (data: Record<string, any>) => {
+        console.log(data);
+        navigate(`/stock-payments?stockId=${data?.stockId}`);
       },
       show: true
     }

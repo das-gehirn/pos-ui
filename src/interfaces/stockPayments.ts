@@ -1,5 +1,7 @@
 import { DefaultPluginProps } from ".";
 import { MOP, NetworkType } from "./expenditure";
+import { StockProps } from "./stock";
+import { SupplierProps } from "./supplier";
 
 export interface StockCreditorPaymentProps extends DefaultPluginProps {
   _id?: string;
@@ -22,4 +24,8 @@ export interface StockCreditorPaymentProps extends DefaultPluginProps {
   remarks?: string;
   hasReceipt?: boolean;
   creditorId: string;
+
+  // virtual
+  supplierData?: SupplierProps;
+  stockData?: StockProps;
 }

@@ -21,6 +21,8 @@ import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
 import { useNavigate } from "react-router-dom";
 import { StockCreditorPaymentProps } from "@/interfaces/stockPayments";
 import { toast } from "sonner";
+import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert";
+import { AlertCircle } from "lucide-react";
 
 const PayStockScreen = () => {
   const defaultObj = defaultStockCreditorPayment();
@@ -99,6 +101,9 @@ const PayStockScreen = () => {
       }
     );
   };
+  const stockAmount = stockCredit?.amount || 0;
+
+  const disableFields = stockAmount <= 0;
 
   return (
     <DashboardLayout
@@ -109,9 +114,18 @@ const PayStockScreen = () => {
       <PageContainer>
         <div className="flex items-center justify-center flex-col">
           <div className="lg:w-1/2 w-full">
+            {stockAmount <= 0 && (
+              <div className="mb-5">
+                <Alert variant={"destructive"}>
+                  <AlertCircle className="h-4 w-4" />
+                  <AlertTitle>Alert!!!</AlertTitle>
+                  <AlertDescription>Stock has been fully paid...</AlertDescription>
+                </Alert>
+              </div>
+            )}
+
             <div className="flex justify-end">
-              Total Amount:{" "}
-              <span className="ml-1 font-medium">{formatCurrency({ value: stockCredit?.amount || 0 })}</span>
+              Total Amount: <span className="ml-1 font-medium">{formatCurrency({ value: stockAmount })}</span>
             </div>
             <SelectField
               fieldKey="creditorId"
@@ -119,6 +133,7 @@ const PayStockScreen = () => {
               label="Stock ID"
               selectValue={formValues?.creditorId}
               onChange={formFieldChangeHandler}
+              isDisabled={disableFields}
             />
             <InputField
               disabled
@@ -132,12 +147,13 @@ const PayStockScreen = () => {
               fieldKey="amountPaid"
               handleInputChange={formFieldChangeHandler}
               value={formValues?.amountPaid}
+              disabled={isPending || disableFields}
             />
             <ModeOfPaymentForm
               formFieldChangeHandler={formFieldChangeHandler}
               formValues={formValues}
               spaceSize="sm"
-              disabled={isPending}
+              disabled={isPending || disableFields}
             />
             <CheckBoxField
               label={"Check if payment has receipt"}
@@ -145,7 +161,7 @@ const PayStockScreen = () => {
               checked={formValues?.hasReceipt}
               handleFieldChange={formFieldChangeHandler}
               fieldKey="hasReceipt"
-              disabled={isPending}
+              disabled={isPending || disableFields}
             />
             {formValues?.hasReceipt && (
               <InputField
@@ -153,7 +169,7 @@ const PayStockScreen = () => {
                 handleInputChange={formFieldChangeHandler}
                 label="Receipt Number"
                 value={formValues?.receiptNumber}
-                disabled={isPending}
+                disabled={isPending || disableFields}
               />
             )}
             <TextAreaField
@@ -161,15 +177,17 @@ const PayStockScreen = () => {
               fieldKey="remarks"
               handleInputChange={formFieldChangeHandler}
               value={formValues?.remarks}
-              disabled={isPending}
+              disabled={isPending || disableFields}
             />
-            <PrimaryButton
-              text="Pay"
-              className="mt-5"
-              onClick={handleFormSubmit}
-              disabled={isPending}
-              loading={isPending}
-            />
+            {stockAmount > 0 && (
+              <PrimaryButton
+                text="Pay"
+                className="mt-5"
+                onClick={handleFormSubmit}
+                disabled={isPending || disableFields}
+                loading={isPending}
+              />
+            )}
           </div>
         </div>
       </PageContainer>

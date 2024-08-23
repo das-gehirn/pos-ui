@@ -44,6 +44,10 @@ const InspectStock: FC<InspectStockProps> = ({ selectedStock, handleDrawerOpen, 
       }
     );
   };
+
+  const handlePayStock = () => {
+    navigate(`/pay-stock-creditor?creditId=${selectedStock?.creditorData?._id}`);
+  };
   return (
     <Drawer
       description=""
@@ -114,9 +118,10 @@ const InspectStock: FC<InspectStockProps> = ({ selectedStock, handleDrawerOpen, 
             }}
           >
             {selectedStock.status === "pending" && "Edit Stock"}
- {selectedStock.status !== "pending" && type !=="view" && "View Stock"}
+            {selectedStock.status !== "pending" && type !== "view" && "View Stock"}
           </Button>
         </div>
+        {selectedStock.status === "approved" && <Button onClick={handlePayStock}>Pay stock</Button>}
       </div>
     </Drawer>
   );

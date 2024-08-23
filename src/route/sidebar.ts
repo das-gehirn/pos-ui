@@ -306,7 +306,15 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         title: "Analytics",
         url: "/",
         icon: ScanSearch,
-        isDisabled: true
+        isDisabled: false,
+        isVisible: ["admin", "super-admin"].includes(userRole),
+        subLinks: [
+          {
+            title: "Stock Payments",
+            url: "/stock-payments",
+            isVisible: ["admin"].includes(userRole)
+          }
+        ]
       },
       {
         title: "Reports",

@@ -1,5 +1,6 @@
 import { DefaultPluginProps } from ".";
 import { ProductProps } from "./products";
+import { StockCreditorProps } from "./stockCreditors";
 import { SupplierProps } from "./supplier";
 import { UserProps } from "./user";
 
@@ -27,8 +28,9 @@ export interface StockProps extends DefaultPluginProps {
   warehouseId: string;
   status?: StockStatus;
 
-  // virtuals
+  // virtual
   supplier?: SupplierProps;
   products?: ProductProps[];
   createdByData?: UserProps;
+  creditorData?: StockCreditorProps;
 }

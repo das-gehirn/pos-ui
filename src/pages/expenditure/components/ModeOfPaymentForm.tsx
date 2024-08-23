@@ -47,7 +47,7 @@ const ModeOfPaymentForm: FC<PaymentComponentProps> = ({
         chequeNumber: ""
       },
       cheque: {
-        networkType: "",
+        networkType: undefined,
         mobileMoneyNumber: "",
         transactionId: "",
         bankAccountNumber: "",
