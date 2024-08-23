@@ -21,9 +21,11 @@ import { ExpenditureProps } from "@/interfaces/expenditure";
 import { INVOICE_DISCOUNT_TYPE_OPTIONS } from "@/interfaces/invoice";
 import { Banknote, Landmark, NotepadText, Smartphone } from "lucide-react";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 
 const CreateExpenditureScreen = () => {
+  const navigate = useNavigate();
   const { data, isFetching } = useGeneralQuery<any>({
     queryKey: ["expenseTypes"],
     url: "/expense-types",
@@ -39,11 +41,6 @@ const CreateExpenditureScreen = () => {
   const { formValues, updateFormFieldValue } = useFormFieldUpdate(expenditureDefault());
   const [subExpenseType, setSubExpenseType] = useState<any[]>([]);
 
-  const resetKeys = (keys: string[]) => {
-    for (const key of keys) {
-      updateFormFieldValue(key, undefined);
-    }
-  };
   const formFieldChangeHandler = (props: HandlerProps) => {
     const { key, value } = props;
 
@@ -52,36 +49,9 @@ const CreateExpenditureScreen = () => {
       setSubExpenseType(expenseHead?.subExpenses);
     }
 
-    if (key === "modeOfPayment") {
-      switch (value) {
-        case "cash":
-          resetKeys([
-            "mobileMoneyNumber",
-            "chequeNumber",
-            "bankName",
-            "bankAccountNumber",
-            "transactionId",
-            "networkType",
-            "bankBranch"
-          ]);
-          break;
-        case "mobile money":
-          resetKeys(["chequeNumber", "bankName", "bankAccountNumber", "bankBranch", "transactionNumber"]);
-          break;
-        case "bank":
-          resetKeys(["chequeNumber", "mobileMoneyNumber", "transactionId", "networkType"]);
-          break;
-        case "cheque":
-          resetKeys(["mobileMoneyNumber", "bankAccountNumber", "transactionId", "networkType", "transactionNumber"]);
-          break;
-
-        default:
-          break;
-      }
+    if (key === "hasDiscount" && !value) {
+      updateFormFieldValue("discount", null);
     }
-    if(key === "hasDiscount" && !value){
-      updateFormFieldValue("discount", undefined);
-  }
     updateFormFieldValue(key, value);
   };
   const handleCheckBoxValueChange = (value: string) => {
@@ -112,6 +82,7 @@ const CreateExpenditureScreen = () => {
           toast.success("Success", {
             description: "Expenditure recorded"
           });
+          navigate("/expenditure");
         }
       }
     );

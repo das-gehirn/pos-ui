@@ -18,9 +18,9 @@ export interface ExpenditureProps extends DefaultPluginProps {
   modeOfPayment?: MOP;
   expenseHead?: string;
   subExpense?: string;
-  receiptNumber?: string;
   warehouseId: string;
   accountId: string;
+  receiptNumber?: string;
   transactionNumber?: string;
   bankAccountNumber?: string;
   bankName?: string;
@@ -34,4 +34,5 @@ export interface ExpenditureProps extends DefaultPluginProps {
   createdByData?: UserProps;
   expenseHeadData?: ExpenseTypeProps;
   subExpenseHeadData?: SubExpenseTypeProps;
+  totalAmount?: number;
 }

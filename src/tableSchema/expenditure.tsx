@@ -1,4 +1,4 @@
-import { Calendar, Section } from "lucide-react";
+import { Calendar, HandCoins, Section } from "lucide-react";
 import { ColumnDef } from "@tanstack/react-table";
 import { DataTableColumnHeader } from "@/components/table/DataTableColumnHeader";
 import { DataFilterProps } from "@/components/table/type";
@@ -6,17 +6,18 @@ import { startCase } from "lodash";
 import { format } from "date-fns";
 import { formatCurrency } from "@/helpers";
 import { ExpenditureProps } from "@/interfaces/expenditure";
+import { MOP_OPTIONS } from "./sales";
 
 export const expenditureTableFilters: DataFilterProps[] = [
   {
-    column: "createdAt",
-    options: [],
-    title: "Created on",
+    column: "modeOfPayment",
+    options: MOP_OPTIONS,
+    title: "Mode of payment",
     extra: {
-      mainIcon: Calendar
-    },
-    isDate: true
+      mainIcon: HandCoins
+    }
   },
+
   {
     column: "type",
     options: [
@@ -33,6 +34,15 @@ export const expenditureTableFilters: DataFilterProps[] = [
     extra: {
       mainIcon: Section
     }
+  },
+  {
+    column: "createdAt",
+    options: [],
+    title: "Created on",
+    extra: {
+      mainIcon: Calendar
+    },
+    isDate: true
   }
 ];
 
@@ -61,6 +71,16 @@ export const expenditureTableSchema: ColumnDef<ExpenditureProps>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Price per quantity" />,
     cell: ({ row }) => {
       return <div className="flex space-x-2">{formatCurrency({ value: row.getValue("pricePerQuantity") || 0 })}</div>;
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    }
+  },
+  {
+    accessorKey: "totalAmount",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Total Amount" />,
+    cell: ({ row }) => {
+      return <div className="flex space-x-2">{formatCurrency({ value: row.getValue("totalAmount") || 0 })}</div>;
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));

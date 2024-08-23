@@ -9,9 +9,10 @@ import { ExpenditureProps } from "@/interfaces/expenditure";
 import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
 import { objectDifference } from "@/helpers";
 import { toast } from "sonner";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const UpdateExpenditureScreen = () => {
+  const navigate = useNavigate();
   const params = useParams<{ id: string }>();
   const expenditureId = params.id;
   const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(expenditureDefault());
@@ -35,60 +36,27 @@ const UpdateExpenditureScreen = () => {
     enabled: !!expenditureId
   });
 
-  const resetKeys = (keys: string[]) => {
-    for (const key of keys) {
-      updateFormFieldValue(key, undefined);
-    }
-  };
   const formFieldChangeHandler = (props: HandlerProps) => {
     const { key, value } = props;
     if (key === "expenseHead") {
       const expenseHead = data?.data.find((d: any) => d._id === value) || {};
       setSubExpenseType(expenseHead?.subExpenses);
     }
-
-    if (key === "modeOfPayment") {
-      switch (value) {
-        case "cash":
-          resetKeys([
-            "mobileMoneyNumber",
-            "chequeNumber",
-            "bankName",
-            "bankAccountNumber",
-            "transactionId",
-            "networkType",
-            "bankBranch"
-          ]);
-          break;
-        case "mobile money":
-          resetKeys(["chequeNumber", "bankName", "bankAccountNumber", "bankBranch", "transactionNumber"]);
-          break;
-        case "bank":
-          resetKeys(["chequeNumber", "mobileMoneyNumber", "transactionId", "networkType"]);
-          break;
-        case "cheque":
-          resetKeys(["mobileMoneyNumber", "bankAccountNumber", "transactionId", "networkType", "transactionNumber"]);
-          break;
-
-        default:
-          break;
-      }
-    }
-    if(key === "hasDiscount" && !value){
-        updateFormFieldValue("discount", undefined);
+    if (key === "hasDiscount" && !value) {
+      updateFormFieldValue("discount", null);
     }
     updateFormFieldValue(key, value);
   };
 
   const expenseOptions: OptionsProps[] =
-    data?.data.map((d: any) => {
+    data?.data?.map((d: any) => {
       return {
         label: d.title,
         value: d._id
       };
     }) || [];
   const subExpenseOptions: OptionsProps[] =
-    subExpenseType.map((d: any) => {
+    subExpenseType?.map((d: any) => {
       return {
         label: d.title,
         value: d._id
@@ -97,8 +65,6 @@ const UpdateExpenditureScreen = () => {
 
   const payload = objectDifference(expenditureData, formValues) as ExpenditureProps;
   const handleExpenditureSubmit = () => {
-    console.log(payload);
-    
     mutate(
       { payload },
       {
@@ -106,6 +72,7 @@ const UpdateExpenditureScreen = () => {
           toast.success("Success", {
             description: "Expenditure updated"
           });
+          navigate("/expenditure");
         }
       }
     );
@@ -113,6 +80,8 @@ const UpdateExpenditureScreen = () => {
   useEffect(() => {
     if (expenditureData) {
       setFormValues(expenditureData);
+      const expenseHead = data?.data.find((d: any) => d._id === expenditureData?.expenseHead) || {};
+      setSubExpenseType(expenseHead?.subExpenses);
     }
   }, [params.id, expenditureData]);
   return (

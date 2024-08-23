@@ -19,9 +19,9 @@ export interface SalesProps {
   tax: number;
   modeOfPayment?: MOP;
   amountPaid: number;
-  mobileMoneyPayment?: MobileMoneyPaymentProps;
-  bankPayment?: BankPaymentProps;
-  chequePayment?: ChequePaymentProps;
+  mobileMoneyPayment?: MobileMoneyPaymentProps | null;
+  bankPayment?: BankPaymentProps | null;
+  chequePayment?: ChequePaymentProps | null;
   description?: string;
 }
 

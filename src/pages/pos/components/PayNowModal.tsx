@@ -32,27 +32,27 @@ const PayNowModal: FC<PayNowProps> = ({ customers }) => {
     switch (modeOfPayment) {
       case "cash":
         setState({
-          mobileMoneyPayment: undefined,
-          bankPayment: undefined,
-          chequePayment: undefined
+          mobileMoneyPayment: null,
+          bankPayment: null,
+          chequePayment: null
         });
         break;
       case "mobile money":
         setState({
-          bankPayment: undefined,
-          chequePayment: undefined
+          bankPayment: null,
+          chequePayment: null
         });
         break;
       case "bank":
         setState({
-          mobileMoneyPayment: undefined,
-          chequePayment: undefined
+          mobileMoneyPayment: null,
+          chequePayment: null
         });
         break;
       case "cheque":
         setState({
-          mobileMoneyPayment: undefined,
-          bankPayment: undefined
+          mobileMoneyPayment: null,
+          bankPayment: null
         });
         break;
 
