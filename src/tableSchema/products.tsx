@@ -5,6 +5,7 @@ import { ProductProps, ProductStatus } from "@/interfaces/products";
 import TableStatus from "@/components/TableStatus";
 import { Calendar, Currency, Settings2 } from "lucide-react";
 import { DataFilterProps } from "@/components/table/type";
+import { formatCurrency } from "@/helpers";
 
 export const PRODUCT_STATUS_OPTIONS = [
   {
@@ -114,7 +115,16 @@ export const productTableSchema: ColumnDef<ProductProps>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Unit Price" />,
     cell: ({ row }) => {
       const value: number = row.getValue("productUnitPrice");
-      return <div className="flex space-x-2">&#8373;{value.toFixed(2)}</div>;
+      return (
+        <div className="flex space-x-2">
+          &#8373;
+          {formatCurrency({
+            value,
+            currencyDisplay: "symbol",
+            showCurrencySign: false
+          })}
+        </div>
+      );
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
@@ -125,7 +135,36 @@ export const productTableSchema: ColumnDef<ProductProps>[] = [
     header: ({ column }) => <DataTableColumnHeader column={column} title="Selling Price" />,
     cell: ({ row }) => {
       const value: number = row.getValue("productSellingPrice");
-      return <div className="flex space-x-2">&#8373;{value.toFixed(2)}</div>;
+      return (
+        <div className="flex space-x-2">
+          &#8373;
+          {formatCurrency({
+            value,
+            currencyDisplay: "symbol",
+            showCurrencySign: false
+          })}
+        </div>
+      );
+    },
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    }
+  },
+  {
+    accessorKey: "totalProductPrice",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Total Stock Amount" />,
+    cell: ({ row }) => {
+      const value: number = row.getValue("totalProductPrice");
+      return (
+        <div className="flex space-x-2">
+          &#8373;
+          {formatCurrency({
+            value,
+            currencyDisplay: "symbol",
+            showCurrencySign: false
+          })}
+        </div>
+      );
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));
