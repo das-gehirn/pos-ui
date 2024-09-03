@@ -142,7 +142,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="space-y-4">
+    <div className="">
       <DataTableToolbar
         table={table}
         showExportButton={showExportButton}
@@ -162,7 +162,7 @@ export function DataTable<TData, TValue>({
                   return (
                     <TableHead
                       key={header.id}
-                      className={`table-head__title p-2 `}
+                      className={`table-head__title`}
                       style={{ width: `${header.getSize()}px` }}
                     >
                       {header.isPlaceholder ? null : flexRender(header.column.columnDef.header, header.getContext())}

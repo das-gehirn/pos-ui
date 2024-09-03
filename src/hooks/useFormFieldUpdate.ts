@@ -1,12 +1,12 @@
 import { useState, useCallback } from "react";
-import set from "lodash/set";
+import { cloneDeep, set } from "lodash";
 
 export const useFormFieldUpdate = <T>(defaultData: T) => {
   const [formValues, setFormValues] = useState<T>(defaultData);
 
   const updateFormFieldValue = useCallback((key: string, value: any) => {
     setFormValues((prev) => {
-      const updatedFormValues = { ...prev };
+      const updatedFormValues = cloneDeep(prev);
       set(updatedFormValues as Record<string, any>, key, value);
       return { ...updatedFormValues };
     });
@@ -15,6 +15,6 @@ export const useFormFieldUpdate = <T>(defaultData: T) => {
   return {
     formValues,
     updateFormFieldValue,
-    setFormValues,
+    setFormValues
   };
 };

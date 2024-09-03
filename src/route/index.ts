@@ -11,6 +11,7 @@ import { CUSTOMERS_ROUTES } from "./customers";
 import { SALES_ROUTES } from "./sales";
 import SettingsScreen from "@/pages/settings/SettingsScreen";
 import { INVOICES_ROUTES } from "./invoices";
+import { EXPENDITURE_ROUTES } from "./expenditure";
 
 export const ROUTES: RoutesProps[] = [
   ...AUTH_ROUTES,
@@ -23,6 +24,7 @@ export const ROUTES: RoutesProps[] = [
   ...CUSTOMERS_ROUTES,
   ...SALES_ROUTES,
   ...INVOICES_ROUTES,
+  ...EXPENDITURE_ROUTES,
   {
     component: SettingsScreen,
     url: "/settings",

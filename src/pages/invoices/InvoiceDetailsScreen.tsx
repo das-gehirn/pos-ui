@@ -49,9 +49,9 @@ const InvoiceDetailsScreen = () => {
           <div>
             <div className="flex gap-x-5">
               <h1 className="font-medium text-2xl mb-2">INV-101010</h1>
-              <p>
+              <div>
                 <Badge variant={invoiceStatusColors[data?.status || "not paid"]}>{startCase(data?.status)}</Badge>
-              </p>
+              </div>
             </div>
             <p className="text-sm flex gap-x-5">
               <span className="font-medium">
@@ -59,9 +59,9 @@ const InvoiceDetailsScreen = () => {
                 <span className="text-gray-500 ml-1.5">GHS</span>
               </span>
               <li className="text-gray-500 font-light">
-                Issued at {data?.invoiceDate && format(data?.invoiceDate, "do LLL Y")}
+                Issued at {data?.invoiceDate && format(data?.invoiceDate, "do LLL y")}
               </li>
-              <li className="text-gray-500 font-light">Due at {data?.dueDate && format(data?.dueDate, "do LLL Y")}</li>
+              <li className="text-gray-500 font-light">Due at {data?.dueDate && format(data?.dueDate, "do LLL y")}</li>
             </p>
           </div>
         </div>

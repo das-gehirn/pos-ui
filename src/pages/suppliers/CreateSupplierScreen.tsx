@@ -70,7 +70,6 @@ const CreateSupplierScreen = () => {
       handleFormFieldChange={handleChange}
       onsubmitHandler={onsubmitHandler}
       disabledButton={isPending}
-      isLoading={isPending}
       errors={errors as any}
       pageTitle="Create Supplier"
     />

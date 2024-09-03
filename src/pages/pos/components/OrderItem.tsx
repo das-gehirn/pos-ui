@@ -37,7 +37,6 @@ export const OrderItem: FC<{ item: Item }> = ({ item }) => {
 
   const handleItemQuantityChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    console.log({ value });
     if (value === "" || /^[0-9\b]+$/.test(value)) {
       setQuantity(value);
     }
@@ -45,7 +44,6 @@ export const OrderItem: FC<{ item: Item }> = ({ item }) => {
 
   const handleBlur = () => {
     const value = Number(quantity);
-    console.log(value);
     if (value >= 1) {
       setItemQuantity(item.id, value);
     } else {

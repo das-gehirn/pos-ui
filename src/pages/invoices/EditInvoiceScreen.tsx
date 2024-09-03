@@ -1,7 +1,6 @@
 import { useNavigate, useParams } from "react-router-dom";
 import { HandlerProps } from "@/components/customFields/type";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
-import { invoiceDefault } from "@/defaults";
 import { addMonths } from "date-fns";
 import { objectDifference } from "@/helpers";
 import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
@@ -20,6 +19,7 @@ const EditInvoiceScreen = () => {
     url: `/invoices/${invoiceId}`,
     enabled: !!invoiceId
   });
+
   const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(data);
 
   const handleFormFieldChange = (data: HandlerProps) => {
@@ -32,17 +32,16 @@ const EditInvoiceScreen = () => {
     }
     if (key === "discount.value" && value > 100) {
       updateFormFieldValue(key, 0);
-    }
-    updateFormFieldValue(key, value);
+    } else updateFormFieldValue(key, value);
   };
-
-  const payload = objectDifference(invoiceDefault(), formValues);
 
   const { isPending, mutate } = useGeneralMutation({
     httpMethod: "put",
     mutationKey: ["updateInvoice"],
     url: `/invoices/${invoiceId}`
   });
+  const payload = objectDifference(data, formValues);
+
   const handleItemSubmit = () => {
     mutate(
       { payload },
@@ -68,7 +67,7 @@ const EditInvoiceScreen = () => {
       onsubmitHandler={handleItemSubmit}
       pageDescription="Edit the form to update the invoice"
       pageTitle="Edit invoice"
-      disabledButton={isPending}
+      disabledButton={isPending || Object.keys(payload).length < 1}
       formFields={formValues}
       disableFields={isPending}
     />

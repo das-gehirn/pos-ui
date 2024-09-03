@@ -6,10 +6,11 @@ import { useError } from "@/hooks/useError";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 import { Validator } from "@/validator";
 import { LockKeyhole } from "lucide-react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 
 const ResetPasswordScreen = () => {
   const location = useLocation();
+  const navigate = useNavigate();
   const [, token] = location.search.split("=");
   const initialData = {
     password: "",
@@ -17,7 +18,7 @@ const ResetPasswordScreen = () => {
   };
   const { isPending, mutate } = useAuthResetPassword();
   const { addErrors, errors, resetError } = useError<typeof initialData>();
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate<typeof initialData>(initialData);
+  const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate<typeof initialData>(initialData);
 
   const formFieldHandler = (data: HandlerProps) => {
     const { key, value } = data;
@@ -40,7 +41,15 @@ const ResetPasswordScreen = () => {
     } else {
       resetError();
     }
-    mutate({ ...formValues, token });
+    mutate(
+      { ...formValues, token },
+      {
+        onSuccess() {
+          setFormValues(initialData);
+          navigate("/auth/login");
+        }
+      }
+    );
   };
   return (
     <div className="min-h-screen flex items-center justify-center">

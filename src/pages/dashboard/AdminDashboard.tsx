@@ -5,6 +5,8 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { ApexOptions } from "apexcharts";
 import { Coins } from "lucide-react";
 import Chart from "react-apexcharts";
+// import SalesReport from "../sales/SalesReport";
+import { formatCurrency } from "@/helpers";
 
 const Dashboard = () => {
   const state = {
@@ -36,10 +38,10 @@ const Dashboard = () => {
   return (
     <DashboardLayout pageTitle="Dashboard" pageDescription="Here is the analysis for your store" showScrollToTopButton>
       <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-4">
-        <DashboardCard amount={20} percentageDifference={10} title="May Total Sales" isAmount />
-        <DashboardCard amount={280} percentageDifference={18} title="May Total Expenditure" />
-        <DashboardCard amount={200} percentageDifference={0.8} title="May Total Stock" isAmount />
-        <DashboardCard amount={270} percentageDifference={17} title="May Total Profit" />
+        <DashboardCard amount={0} percentageDifference={0} title="May Total Sales" />
+        <DashboardCard amount={0} percentageDifference={0} title="May Total Expenditure" />
+        <DashboardCard amount={0} percentageDifference={-12} title="May Total Stock" isAmount={false} />
+        <DashboardCard amount={0} percentageDifference={9} title="May Total Profit" />
       </div>
 
       <div className="grid lg:grid-cols-3 my-16 gap-5">
@@ -96,7 +98,7 @@ const Dashboard = () => {
             <div className="flex flex-1 items-center justify-between">
               <div className="space-y-3">
                 <p className="text-[12px]">Yearly Portfolio value</p>
-                <h1 className="text-xl font-medium">$18,200,200,200.00</h1>
+                <h1 className="text-xl font-medium">{formatCurrency({ value: 0 })}</h1>
               </div>
               <div className="border-[#cccccc2b] rounded-full w-10 h-10 border flex items-center justify-center">
                 <Coins className="text-green-500" />
@@ -109,11 +111,11 @@ const Dashboard = () => {
               <div className="flex my-3 gap-3">
                 <div className="flex text-[12px] items-center gap-1">
                   <span className="h-2 w-2 bg-green-400 block rounded-full"></span>
-                  <p>Profit: $34,098,097.00</p>
+                  <p>Profit: {formatCurrency({ value: 0 })}</p>
                 </div>
                 <div className="flex text-[12px] items-center gap-1">
                   <span className="h-2 w-2 bg-green-100 block rounded-full"></span>
-                  <p>Loss: $34,098,097.00</p>
+                  <p>Loss: {formatCurrency({ value: 0 })}</p>
                 </div>
               </div>
             </div>
@@ -427,11 +429,11 @@ const Dashboard = () => {
 
             <div className="card flex items-center justify-between">
               <div className="data">
-                <h1 className="font-medium text-5xl md:text-7xl">40</h1>
+                <h1 className="font-medium text-5xl md:text-7xl">0</h1>
                 <p className="text-sm">Total Debtors</p>
               </div>
               <div className="data">
-                <h1 className="font-medium text-5xl md:text-7xl">20</h1>
+                <h1 className="font-medium text-5xl md:text-7xl">0</h1>
                 <p className="text-sm">Total Creditors</p>
               </div>
             </div>
@@ -449,9 +451,12 @@ const Dashboard = () => {
         </div>
       </div>
 
-      <div className="flex justify-between gap-5 space-y-10 md:space-y-0">
-        <div className="bg-white p-5 flex-1">Today's Sales</div>
-        <div className="bg-white p-5 flex-1">Total Debtors</div>
+      <div className="space-y-10">
+        <div className="bg-white p-5">
+          {/* <h1>Today's Sales</h1>
+          <SalesReport isAdmin showSearch={false} /> */}
+        </div>
+        <div className="bg-white p-5">Total Debtors</div>
       </div>
     </DashboardLayout>
   );

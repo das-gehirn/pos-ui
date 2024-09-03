@@ -12,7 +12,7 @@ const ForgotPasswordScreen = () => {
   const initialData = {
     email: ""
   };
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(initialData);
+  const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(initialData);
   const { addErrors, errors, resetError } = useError<typeof initialData>();
   const { isPending, mutate } = useAuthForgotPasswordPassword();
   const formFieldHandler = (data: HandlerProps) => {
@@ -35,7 +35,14 @@ const ForgotPasswordScreen = () => {
       resetError();
     }
 
-    mutate({ email: formValues.email });
+    mutate(
+      { email: formValues.email },
+      {
+        onSuccess() {
+          setFormValues(initialData);
+        }
+      }
+    );
   };
   return (
     <div className="min-h-screen flex items-center justify-center">
