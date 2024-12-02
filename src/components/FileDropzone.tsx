@@ -78,6 +78,7 @@ DropzoneProps) {
 
     // Check file extension
     const [, fileExtension] = uploadedFile.type.split("/");
+    console.log(uploadedFile);
     if (
       allowedFileExtensions &&
       allowedFileExtensions.length &&

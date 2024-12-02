@@ -16,7 +16,8 @@ import {
   Puzzle,
   LucideIcon,
   Coins,
-  FileSpreadsheet
+  FileSpreadsheet,
+  Upload
 } from "lucide-react";
 
 interface RouteLink {
@@ -219,6 +220,13 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         title: "Supplier",
         url: "/suppliers",
         icon: Truck,
+        isDisabled: false,
+        isVisible: hasPermission(userPermission, ["suppliers", "read"])
+      },
+      {
+        title: "Imports",
+        url: "/imports",
+        icon: Upload,
         isDisabled: false,
         isVisible: hasPermission(userPermission, ["suppliers", "read"])
       },

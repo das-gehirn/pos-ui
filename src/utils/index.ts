@@ -80,6 +80,13 @@ export const USER_STATUS_OPTIONS = [
     value: "inactive"
   }
 ];
+// type ServiceType = "product";
+export const SERVICES_OPTIONS = [
+  {
+    label: "product",
+    value: "product"
+  }
+];
 
 const notValidPermission = ["settings", "faqs", "calendar"];
 export const permissionResources: PermissionString[] = PERMISSIONS_LIST.filter((resource) => {
