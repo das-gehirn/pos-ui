@@ -3,7 +3,7 @@ import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
 import { useError } from "@/hooks/useError";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 import { Validator } from "@/validator";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import EditProductCategoryFields from "./EditProductCategoryFields";
 
@@ -14,8 +14,8 @@ const CreateProductCategoryScreen = () => {
     name: ""
   };
   const { addErrors, errors, resetError } = useError<typeof defaultData>();
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(defaultData);
-  const navigate = useNavigate();
+  const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(defaultData);
+  // const navigate = useNavigate();
   const { isPending, mutate } = useGeneralMutation({
     httpMethod: "post",
     mutationKey: ["createProductCategory"],
@@ -50,7 +50,8 @@ const CreateProductCategoryScreen = () => {
           toast.success("Success", {
             description: "Product category created"
           });
-          navigate("/product-categories");
+          // navigate("/product-categories");
+          setFormValues(defaultData);
         }
       }
     );

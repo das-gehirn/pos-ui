@@ -3,7 +3,7 @@ import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
 import { useError } from "@/hooks/useError";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 import { Validator } from "@/validator";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import EditProductBrandFields from "./EditProductBrandFields";
 
@@ -14,8 +14,8 @@ const CreateProductBrandScreen = () => {
     name: ""
   };
   const { addErrors, errors, resetError } = useError<typeof defaultData>();
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(defaultData);
-  const navigate = useNavigate();
+  const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(defaultData);
+  // const navigate = useNavigate();
   const { isPending, mutate } = useGeneralMutation({
     httpMethod: "post",
     mutationKey: ["createProductBrand"],
@@ -50,7 +50,8 @@ const CreateProductBrandScreen = () => {
           toast.success("Success", {
             description: "Product brand created"
           });
-          navigate("/product-brands");
+          setFormValues(defaultData);
+          // navigate("/product-brands");
         }
       }
     );
