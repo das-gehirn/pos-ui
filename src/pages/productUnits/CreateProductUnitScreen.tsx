@@ -3,7 +3,7 @@ import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
 import { useError } from "@/hooks/useError";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 import { Validator } from "@/validator";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import EditProductUnitFields from "./EditProductUnitFields";
 
@@ -15,8 +15,8 @@ const CreateProductUnitScreen = () => {
     name: ""
   };
   const { addErrors, errors, resetError } = useError<typeof defaultData>();
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(defaultData);
-  const navigate = useNavigate();
+  const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(defaultData);
+  // const navigate = useNavigate();
   const { isPending, mutate } = useGeneralMutation({
     httpMethod: "post",
     mutationKey: ["createProductUnit"],
@@ -52,7 +52,8 @@ const CreateProductUnitScreen = () => {
           toast.success("Success", {
             description: "Product unit created"
           });
-          navigate("/product-units");
+          // navigate("/product-units");
+          setFormValues(defaultData);
         }
       }
     );

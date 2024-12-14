@@ -3,7 +3,7 @@ import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
 import { useError } from "@/hooks/useError";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 import { Validator } from "@/validator";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import EditProductCodeFields from "./EditProductCodeFields";
 
@@ -14,8 +14,8 @@ const CreateProductCodeScreen = () => {
     code: ""
   };
   const { addErrors, errors, resetError } = useError<typeof defaultData>();
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(defaultData);
-  const navigate = useNavigate();
+  const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(defaultData);
+  // const navigate = useNavigate();
   const { isPending, mutate } = useGeneralMutation({
     httpMethod: "post",
     mutationKey: ["createProductCode"],
@@ -50,7 +50,8 @@ const CreateProductCodeScreen = () => {
           toast.success("Success", {
             description: "Product code created"
           });
-          navigate("/product-codes");
+          // navigate("/product-codes");
+          setFormValues(defaultData);
         }
       }
     );

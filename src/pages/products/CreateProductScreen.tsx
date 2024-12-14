@@ -6,7 +6,7 @@ import { useError } from "@/hooks/useError";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 import { ProductProps } from "@/interfaces/products";
 import { Validator } from "@/validator";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import ProductEditFields from "./ProductEditFields";
 import { UploadedFileProps } from "@/components/FileDropzone";
@@ -14,7 +14,7 @@ import { useState } from "react";
 import { isObject } from "lodash";
 
 const CreateProductScreen = () => {
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const [productImage, setProductImage] = useState<File>();
   const handleFieldChange = (data: HandlerProps) => {
     const { key, value } = data;
@@ -30,7 +30,8 @@ const CreateProductScreen = () => {
     requireAuth: true
   });
   const { addErrors, errors, resetError } = useError<ProductProps>();
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(productDefaults());
+  const defaultData = productDefaults();
+  const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(defaultData);
 
   const handleSubmit = () => {
     const validator = new Validator<ProductProps>({
@@ -98,7 +99,8 @@ const CreateProductScreen = () => {
           toast.success("Success", {
             description: "Product created"
           });
-          navigate("/products");
+          // navigate("/products");
+          setFormValues(defaultData);
         }
       }
     );
