@@ -15,7 +15,7 @@ export const productCategorySchema: ColumnDef<ProductCategoryProps>[] = [
   },
   {
     accessorKey: "description",
-    header: ({ column }) => <DataTableColumnHeader column={column} title="Product Description" />,
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Product Category Description" />,
     cell: ({ row }) => {
       return <div className="flex space-x-2">{row.getValue("description")}</div>;
     },
