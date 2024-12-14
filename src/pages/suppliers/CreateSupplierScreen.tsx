@@ -7,20 +7,20 @@ import { hasValidPhone } from "@/utils";
 import { Validator } from "@/validator";
 import { PhoneProps } from "@/interfaces";
 import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
-import { addressValidationProps } from "@/helpers";
 import { toast } from "sonner";
 import { pick } from "lodash";
-import { useNavigate } from "react-router-dom";
+// import { useNavigate } from "react-router-dom";
 import SupplierEditFields from "./SupplierEditFields";
 const CreateSupplierScreen = () => {
-  const { formValues, updateFormFieldValue } = useFormFieldUpdate(supplierDefaults());
+  const defaultData = supplierDefaults();
+  const { formValues, updateFormFieldValue, setFormValues } = useFormFieldUpdate(defaultData);
   const { errors, resetError, addErrors } = useError<any>();
   const { isPending, mutate } = useGeneralMutation({
     httpMethod: "post",
     mutationKey: ["createSupplier"],
     url: "/suppliers"
   });
-  const navigate = useNavigate();
+  // const navigate = useNavigate();
   const handleChange = (data: HandlerProps) => {
     updateFormFieldValue(data.key, data.value);
   };
@@ -28,13 +28,9 @@ const CreateSupplierScreen = () => {
     const validator = new Validator<SupplierProps>({
       formData: formValues,
       rules: {
-        ...addressValidationProps.validation,
         name: "required|minLength:3",
         email: "required|isEmail",
         phone: "required|customValidator"
-      },
-      customFieldKeys: {
-        ...addressValidationProps.customFields
       }
     });
     validator.addCustomValidation({
@@ -58,7 +54,8 @@ const CreateSupplierScreen = () => {
           toast.success("Success", {
             description: "Supplier created"
           });
-          navigate("/suppliers");
+          // navigate("/suppliers");
+          setFormValues(defaultData);
         }
       }
     );
