@@ -14,6 +14,14 @@ export const productCodeSchema: ColumnDef<ProductCodeProps>[] = [
     size: 12
   },
   {
+    accessorKey: "description",
+    header: ({ column }) => <DataTableColumnHeader column={column} title="Code Description" />,
+    cell: ({ row }) => <div className="flex space-x-2">{row.getValue("description")}</div>,
+    filterFn: (row, id, value) => {
+      return value.includes(row.getValue(id));
+    }
+  },
+  {
     accessorKey: "createdAt",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Created At" />,
     cell: ({ row }) => {
