@@ -38,7 +38,7 @@ class ValidatorCheck {
   }
 
   isNumber(fieldValue: string): boolean {
-    return /^\d+$/.test(fieldValue);
+    return Boolean(fieldValue && !isNaN(Number(fieldValue)));
   }
 
   isString(fieldValue: string): boolean {
