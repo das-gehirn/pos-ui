@@ -8,9 +8,10 @@ import { ProductProps } from "@/interfaces/products";
 const ProductDetail: FC<{ product: ProductProps }> = ({ product }) => {
   const {
     productSellingPrice,
-    productQuantity: { availableQuantity: quantity = 0 } = { availableQuantity: 0 },
+    // productQuantity: { availableQuantity: quantity = 0 } = { availableQuantity: 0 },
     _id
   } = product;
+  const quantity = 0;
   const { addItem } = usePosStore();
   const productName = product?.productCode?.code ? `${product?.productCode?.code} - ${product.name}` : product.name;
   const handleAddProduct = () => {
