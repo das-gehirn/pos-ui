@@ -6,7 +6,11 @@ import usePosStore from "@/store/pos";
 import { ProductProps } from "@/interfaces/products";
 
 const ProductDetail: FC<{ product: ProductProps }> = ({ product }) => {
-  const { productSellingPrice, productQuantity: { availableQuantity: quantity = 0 } = {}, _id } = product;
+  const {
+    productSellingPrice,
+    productQuantity: { availableQuantity: quantity = 0 } = { availableQuantity: 0 },
+    _id
+  } = product;
   const { addItem } = usePosStore();
   const productName = product?.productCode?.code ? `${product?.productCode?.code} - ${product.name}` : product.name;
   const handleAddProduct = () => {
