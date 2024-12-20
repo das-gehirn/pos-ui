@@ -55,7 +55,7 @@ const useProductStore = create<State & Action>()((set, get) => ({
               ...p,
               productQuantity: {
                 ...p.productQuantity,
-                availableQuantity: p.productQuantity.availableQuantity + amount
+                availableQuantity: p.productQuantity?.availableQuantity + amount
               }
             }
           : p
@@ -71,7 +71,7 @@ const useProductStore = create<State & Action>()((set, get) => ({
               ...p,
               productQuantity: {
                 ...p.productQuantity,
-                availableQuantity: p.productQuantity.availableQuantity - amount
+                availableQuantity: p.productQuantity?.availableQuantity - amount
               }
             }
           : p
