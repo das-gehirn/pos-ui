@@ -1,5 +1,5 @@
 import { Plus } from "lucide-react";
-import Tile from "@/assets/tile.jpg";
+// import Tile from "@/assets/tile.jpg";
 import { Button } from "@/components/ui/button";
 import { FC } from "react";
 import usePosStore from "@/store/pos";
@@ -20,12 +20,12 @@ const ProductDetail: FC<{ product: ProductProps }> = ({ product }) => {
 
   return (
     <div
-      className={`min-h-[200px] h-[300px] p-2 flex flex-col shadow border rounded-md relative ${
+      className={`p-2 flex flex-col shadow border rounded-md relative ${
         quantity < 1 && "opacity-70 cursor-not-allowed pointer-events-none bg-gray-100"
       }`}
     >
-      <div className="product-image flex-1 mb-4 h-1/2">
-        <img src={Tile} alt="" className="h-full w-full rounded-md" />
+      <div className="product-image flex-1 mb-4">
+        {/* <img src={Tile} alt="" className="h-full w-full rounded-md" /> */}
       </div>
       <div className="product-content flex-1">
         <p className="title text-sm">{productName}</p>
