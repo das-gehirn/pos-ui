@@ -81,15 +81,13 @@ const InvoiceEditFields: FC<InvoiceEditFieldsProps> = ({
     queryKey: ["customers"],
     url: "/customers",
     query: { deleted: false },
-    enabled: true,
-    requireAuth: true
+    enabled: true
   });
   const { data: products, isFetching: isFetchingProducts } = useGeneralQuery<GetManyProps<ProductProps[]>>({
     queryKey: ["products"],
-    url: "/products",
+    url: "//products/general",
     query: { deleted: false },
-    enabled: true,
-    requireAuth: true
+    enabled: true
   });
 
   const customerOptions: OptionsProps[] =
@@ -102,7 +100,7 @@ const InvoiceEditFields: FC<InvoiceEditFieldsProps> = ({
   const productsOptions: OptionsProps[] =
     products?.data.map((product) => {
       return {
-        label: `${product.name}`,
+        label: `${product?.productCode?.code}-${product.name}`,
         value: product._id || ""
       };
     }) || [];
