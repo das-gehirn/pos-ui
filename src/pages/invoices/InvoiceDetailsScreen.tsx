@@ -88,7 +88,7 @@ const InvoiceDetailsScreen = () => {
           <h1 className="text-xl font-medium border-b pb-2">Invoice Batch 2023</h1>
           <div className="md:flex items-center justify-between relative py-4">
             <BillingAddress
-              address={{ poBox: "P.O BOX 34", state: "Ekwamkurom", city: "Agona Swdru" }}
+              address={{ poBox: "P.O BOX 34", state: "Ekwamkrom", city: "Agona Swedru" }}
               email="admin@oseikrom.com"
               name="Oseikrom Hardware Enterprise"
               phone={{ number: "543814868", country: "GH", prefix: "233" }}
