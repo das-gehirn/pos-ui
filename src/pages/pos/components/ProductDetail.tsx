@@ -4,18 +4,19 @@ import { Button } from "@/components/ui/button";
 import { FC } from "react";
 import usePosStore from "@/store/pos";
 import { ProductProps } from "@/interfaces/products";
+import { get } from "lodash";
 
 const ProductDetail: FC<{ product: ProductProps }> = ({ product }) => {
-  const {
-    productSellingPrice,
-    // productQuantity: { availableQuantity: quantity = 0 } = { availableQuantity: 0 },
-    _id
-  } = product;
-  const quantity = 0;
+  const productSellingPrice = get(product, "productSellingPrice", 0);
+  const quantity = get(product, "productQuantity.availableQuantity", 0);
+  const _id = get(product, "_id", "");
+  const productCode = get(product, "productCode.code", "");
+  const productName = productCode ? `${productCode} - ${product.name}` : product.name;
+
   const { addItem } = usePosStore();
-  const productName = product?.productCode?.code ? `${product?.productCode?.code} - ${product.name}` : product.name;
+
   const handleAddProduct = () => {
-    addItem({ id: _id || "", name: productName, price: productSellingPrice, quantity: 1 });
+    addItem({ id: _id, name: productName, price: productSellingPrice, quantity: 1 });
   };
 
   return (
