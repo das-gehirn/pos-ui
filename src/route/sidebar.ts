@@ -50,17 +50,17 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         title: "Users",
         url: "/",
         icon: UsersIcon,
-        isVisible: hasPermission(userPermission, ["users", "read"]),
+        isVisible: hasPermission(userPermission, ["users", "read"], userRole),
         subLinks: [
           {
             title: "Create users",
             url: "/users/create",
-            isVisible: hasPermission(userPermission, ["users", "create"])
+            isVisible: hasPermission(userPermission, ["users", "create"], userRole)
           },
           {
             title: "List users",
             url: "/users",
-            isVisible: hasPermission(userPermission, ["users", "read"])
+            isVisible: hasPermission(userPermission, ["users", "read"], userRole)
           }
         ]
       },
@@ -69,24 +69,24 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         url: "/",
         icon: Tags,
         isDisabled: false,
-        isVisible: hasPermission(userPermission, ["products", "read"]),
+        isVisible: hasPermission(userPermission, ["products", "read"], userRole),
         subLinks: [
           {
             title: "Products List",
             url: "/products",
             isDisabled: false,
-            isVisible: hasPermission(userPermission, ["products", "read"])
+            isVisible: hasPermission(userPermission, ["products", "read"], userRole)
           },
           {
             title: "Add Product",
             url: "/products/create",
             isDisabled: false,
-            isVisible: hasPermission(userPermission, ["products", "create"])
+            isVisible: hasPermission(userPermission, ["products", "create"], userRole)
           },
           {
             title: "Change Product Quantity",
             url: "/products/create",
-            isVisible: hasPermission(userPermission, ["products", "create"])
+            isVisible: hasPermission(userPermission, ["products", "create"], userRole)
           },
           {
             title: "Import Products",
@@ -96,22 +96,22 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
           {
             title: "Product Codes",
             url: "/product-codes",
-            isVisible: hasPermission(userPermission, ["productCode", "read"])
+            isVisible: hasPermission(userPermission, ["productCode", "read"], userRole)
           },
           {
             title: "Product Categories",
             url: "/product-categories",
-            isVisible: hasPermission(userPermission, ["productCategory", "read"])
+            isVisible: hasPermission(userPermission, ["productCategory", "read"], userRole)
           },
           {
             title: "Product Brands",
             url: "/product-brands",
-            isVisible: hasPermission(userPermission, ["productCode", "read"])
+            isVisible: hasPermission(userPermission, ["productCode", "read"], userRole)
           },
           {
             title: "Product Units",
             url: "/product-units",
-            isVisible: hasPermission(userPermission, ["productUnit", "read"])
+            isVisible: hasPermission(userPermission, ["productUnit", "read"], userRole)
           },
           {
             title: "Product Variations",
@@ -122,7 +122,7 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
             title: "Product Warrants",
             url: "/users",
             isDisabled: true,
-            isVisible: hasPermission(userPermission, ["productWarranty", "read"])
+            isVisible: hasPermission(userPermission, ["productWarranty", "read"], userRole)
           },
           {
             title: "Print Barcode/QrCode",
@@ -141,23 +141,23 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         url: "/",
         icon: Box,
         isDisabled: false,
-        isVisible: hasPermission(userPermission, ["inventory", "read"]),
+        isVisible: hasPermission(userPermission, ["inventory", "read"], userRole),
         subLinks: [
           {
             title: "Record Stock",
             url: "/stocks/record",
-            isVisible: hasPermission(userPermission, ["stocks", "create"])
+            isVisible: hasPermission(userPermission, ["stocks", "create"], userRole)
           },
           {
             title: "Stock History",
             url: "/stocks",
-            isVisible: hasPermission(userPermission, ["stocks", "read"])
+            isVisible: hasPermission(userPermission, ["stocks", "read"], userRole)
           },
           {
             title: "Stock Adjustment",
             url: "/users",
             isDisabled: true,
-            isVisible: hasPermission(userPermission, ["stockAdjustments", "read"])
+            isVisible: hasPermission(userPermission, ["stockAdjustments", "read"], userRole)
           }
         ]
       },
@@ -187,23 +187,23 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         title: "Sales",
         url: "/sales",
         icon: Coins,
-        isVisible: hasPermission(userPermission, ["sales", "read"])
+        isVisible: hasPermission(userPermission, ["sales", "read"], userRole)
       },
       {
         title: "Invoicing",
         url: "/invoices",
         icon: FileSpreadsheet,
-        isVisible: hasPermission(userPermission, ["invoice", "read"]),
+        isVisible: hasPermission(userPermission, ["invoice", "read"], userRole),
         subLinks: [
           {
             title: "List invoices",
             url: "/invoices",
-            isVisible: hasPermission(userPermission, ["invoice", "read"])
+            isVisible: hasPermission(userPermission, ["invoice", "read"], userRole)
           },
           {
             title: "Add new invoice",
             url: "/invoices/create",
-            isVisible: hasPermission(userPermission, ["invoice", "create"]),
+            isVisible: hasPermission(userPermission, ["invoice", "create"], userRole),
             isDisabled: false
           }
         ]
@@ -213,14 +213,14 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         url: "/customers",
         icon: UserPlus,
         isDisabled: false,
-        isVisible: hasPermission(userPermission, ["customers", "read"])
+        isVisible: hasPermission(userPermission, ["customers", "read"], userRole)
       },
       {
         title: "Supplier",
         url: "/suppliers",
         icon: Truck,
         isDisabled: false,
-        isVisible: hasPermission(userPermission, ["suppliers", "read"])
+        isVisible: hasPermission(userPermission, ["suppliers", "read"], userRole)
       },
       ...(userRole === "admin"
         ? [
@@ -240,7 +240,7 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
                   title: "Stock Creditors",
                   url: "/stocks/creditors",
                   isDisabled: false,
-                  isVisible: hasPermission(userPermission, ["stockCreditors", "read"])
+                  isVisible: hasPermission(userPermission, ["stockCreditors", "read"], userRole)
                 },
                 {
                   title: "Profit/Loss",
@@ -283,17 +283,17 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
         url: "/",
         icon: MinusCircle,
         isDisabled: false,
-        isVisible: hasPermission(userPermission, ["expenditures", "read"]),
+        isVisible: hasPermission(userPermission, ["expenditures", "read"], userRole),
         subLinks: [
           {
             title: "Add Expense",
             url: "/expenditure/create",
-            isVisible: hasPermission(userPermission, ["expenditures", "create"])
+            isVisible: hasPermission(userPermission, ["expenditures", "create"], userRole)
           },
           {
             title: "Expense List",
             url: "/expenditure",
-            isVisible: hasPermission(userPermission, ["expenditures", "read"])
+            isVisible: hasPermission(userPermission, ["expenditures", "read"], userRole)
           },
           {
             title: "Summary",

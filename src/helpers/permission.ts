@@ -27,9 +27,12 @@ export type IPermission = Record<PermissionString, Record<PermissionOperation, n
 export const permissionOperations: PermissionOperation[] = ["create", "read", "update", "delete"];
 export const hasPermission = (
   userPermission: string,
-  permissions: [PermissionString, PermissionOperation]
+  permissions: [PermissionString, PermissionOperation],
+  role?: string
 ): boolean => {
   if (!userPermission || !permissions) return false;
+
+  if (role && role === "admin") return true;
 
   const [permissionService, permissionOperation] = permissions;
   if (userPermission === "*" && permissionService != "calendar") return true;
