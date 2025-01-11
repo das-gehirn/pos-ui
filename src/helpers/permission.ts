@@ -30,9 +30,8 @@ export const hasPermission = (
   permissions: [PermissionString, PermissionOperation],
   role?: string
 ): boolean => {
-  if (!userPermission || !permissions) return false;
-
   if (role && role === "admin") return true;
+  if (!userPermission || !permissions) return false;
 
   const [permissionService, permissionOperation] = permissions;
   if (userPermission === "*" && permissionService != "calendar") return true;
