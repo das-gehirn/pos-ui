@@ -59,6 +59,7 @@ const InvoiceItemModal: FC<InvoiceItemModalProps> = ({
         options={productOptions}
         label="Product"
         selectValue={invoiceItem?._id}
+        isSearchable
       />
       <NumberField
         fieldKey="quantity"

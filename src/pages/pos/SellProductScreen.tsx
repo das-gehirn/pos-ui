@@ -29,16 +29,19 @@ import {
 } from "@/components/ui/alert-dialog";
 import { useRoleRedirect } from "@/hooks/useRoleRedirect";
 import TodaySales from "../sales/component/TodaySales";
+import { HandlerProps } from "@/components/customFields/type";
+import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 type ProductQueryProps = {
   deleted: boolean;
   limit: number;
   currentPage: number;
   categoryId?: string;
+  search?: string;
 };
 
 const ShimmerLoader = () => {
   return (
-    <div className="min-h-[200px] h-[300px] p-2 flex flex-col shadow border rounded-md relative animate-pulse">
+    <div className="p-2 flex flex-col shadow border rounded-md relative animate-pulse">
       <div className="product-image flex-1 mb-4 h-1/2 bg-gray-200 rounded-md"></div>
       <div className="product-content flex-1">
         <div className="h-4 bg-gray-200 rounded w-3/4 mb-2"></div>
@@ -53,6 +56,11 @@ const ShimmerLoader = () => {
 };
 
 const SellProductScreen = () => {
+  const productSearch = {
+    name: ""
+  };
+
+  const { formValues, updateFormFieldValue } = useFormFieldUpdate(productSearch);
   const { redirectHome } = useRoleRedirect();
   const { products, updateProducts, setProducts } = useProductStore();
   const [currentTab, setCurrentTab] = useState("all");
@@ -63,10 +71,10 @@ const SellProductScreen = () => {
       currentPage: 1,
       categoryId: "all"
     }),
-    [currentTab]
+    []
   );
 
-  const [productQuery, setProductQuery] = useState<ProductQueryProps>(initialProductQueryState());
+  const [productQuery, setProductQuery] = useState<Partial<ProductQueryProps>>(initialProductQueryState());
 
   const handleSetActiveTab = (tab: Record<string, any>) => {
     setCurrentTab(tab.value);
@@ -117,8 +125,8 @@ const SellProductScreen = () => {
   const handleFetchNextProduct = () => {
     setProductQuery((prev) => ({
       ...prev,
-      limit: prev.limit + 20,
-      currentPage: prev.currentPage + 1
+      limit: (prev?.limit || 0) + 30,
+      currentPage: 1
     }));
   };
   const handleGoBack = () => {
@@ -128,6 +136,16 @@ const SellProductScreen = () => {
     setProducts(productsData?.data || []);
   }, [productQuery, currentTab, productsData, setProducts]);
 
+  const handleItemSearch = (data: HandlerProps) => {
+    updateFormFieldValue(data.key, data.value);
+
+    if (data.value.length >= 3 || !data.value.length) {
+      setProductQuery(() => ({
+        search: data.value,
+        searchSelection: "productCodeId"
+      }));
+    }
+  };
   return (
     <DashboardLayout showSidebar={false} fullWidth showHeaderSearchBar={false} isLoading={categoriesFetching}>
       <Drawer
@@ -220,12 +238,13 @@ const SellProductScreen = () => {
                 </div>
                 <div className="flex gap-5">
                   <CustomField
-                    handleInputChange={() => {}}
-                    fieldKey=""
+                    handleInputChange={handleItemSearch}
+                    fieldKey="name"
                     type="text"
                     icon={{ element: Search, position: "left", show: true, className: "bg-transparent" }}
                     placeholder="Search"
                     className="bg-gray-50 flex-1 w-full"
+                    value={formValues?.name}
                   />
                   <Button
                     className="filter shadow w-[50px] h-10 rounded flex items-center justify-center text-gray-600 bg-white hover:text-white"
@@ -238,7 +257,7 @@ const SellProductScreen = () => {
               <InfiniteScroll
                 dataLength={products.length}
                 next={handleFetchNextProduct}
-                hasMore={(productsData?.paginator.totalDocuments || 0) > products.length}
+                hasMore={Boolean((productsData?.paginator.totalDocuments || 0) > products.length && products.length)}
                 loader={<h4>Fetching more products...</h4>}
                 scrollableTarget="products-section"
               >
@@ -249,7 +268,7 @@ const SellProductScreen = () => {
                         {isFetching && (
                           <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
                             {new Array(8).fill(0).map((_, i) => {
-                              return <ShimmerLoader  key={i}/>;
+                              return <ShimmerLoader key={i} />;
                             })}
                           </div>
                         )}
@@ -264,7 +283,7 @@ const SellProductScreen = () => {
                           {isFetching && (
                             <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-5">
                               {new Array(8).fill(0).map((_, i) => {
-                                return <ShimmerLoader key={i}/>;
+                                return <ShimmerLoader key={i} />;
                               })}
                             </div>
                           )}

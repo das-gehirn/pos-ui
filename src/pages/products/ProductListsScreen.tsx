@@ -127,6 +127,7 @@ const ProductListsScreen = () => {
           showSearchSelection
           searchSelectionOptions={[
             { label: "Product Name", value: "name" },
+            { label: "Product Code", value: "productCodeId" },
             { label: "All Fields", value: "" }
           ]}
         />
