@@ -252,6 +252,7 @@ const OrderDetails = () => {
                 onChange={handleFormFieldChange}
                 options={customerOptions}
                 selectValue={getState().customerId}
+                isSearchable
               />
             </div>
             <div className="my-3">
