@@ -1,41 +1,79 @@
 import SimpleTable from "@/components/table/SimpleTable";
 import { SimpleTableColumn } from "@/components/table/type";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { formatCurrency } from "@/helpers";
 import { FC } from "react";
 
 interface SalesAnalysisListViewProps {
-  data: { productName: string; totalQuantity: number; totalPrice: number }[];
+  salesByProduct: { productName: string; totalQuantity: number; totalPrice: number }[];
+  salesByCategoryReport: {
+    category: string;
+    totalItemsSold: number;
+    totalQuantitySold: number;
+  }[];
 }
 
-const SalesAnalysisListView: FC<SalesAnalysisListViewProps> = ({ data }) => {
-  const columns: SimpleTableColumn[] = [
+const SalesAnalysisListView: FC<SalesAnalysisListViewProps> = ({ salesByProduct, salesByCategoryReport }) => {
+  const salesByProductsColumns: SimpleTableColumn[] = [
     { key: "productName", label: "Product Name" },
     { key: "totalQuantity", label: "Quantity Sold", className: "text-center" },
     { key: "totalPrice", label: "Total Amount", className: "text-right" }
   ];
+  const salesByCategoriesColumns: SimpleTableColumn[] = [
+    { key: "category", label: "Product Categories" },
+    { key: "totalQuantitySold", label: "Quantity Sold", className: "text-center" },
+    { key: "totalItemsSold", label: "Total Amount Sold", className: "text-right" }
+  ];
 
   const calculateTotals = () => {
     return {
-      totalQuantity: data.reduce((total, item) => total + item.totalQuantity, 0),
-      totalPrice: data.reduce((total, item) => total + item.totalPrice, 0)
+      salesByProductTotalQuantity: salesByProduct.reduce((total, item) => total + item.totalQuantity, 0),
+      salesByProductTotalPrice: salesByProduct.reduce((total, item) => total + item.totalPrice, 0),
+      salesByCategoryTotalQuantity: salesByCategoryReport.reduce((total, item) => total + item.totalQuantitySold, 0),
+      salesByCategoryTotalPrice: salesByCategoryReport.reduce((total, item) => total + item.totalItemsSold, 0)
     };
   };
-  const dataFormatted = data.map((d) => {
+  const salesByProductData = salesByProduct.map((d) => {
     return {
       ...d,
       totalPrice: formatCurrency({ value: d.totalPrice, showCurrencySign: false })
     };
   });
+  const salesByCategory = salesByCategoryReport.map((d) => {
+    return {
+      ...d,
+      totalItemsSold: formatCurrency({ value: d.totalItemsSold, showCurrencySign: false })
+    };
+  });
 
-  const footerData = [
+  const salesByProductFooterData = [
     {
       productName: "Total",
-      totalQuantity: calculateTotals().totalQuantity,
-      totalPrice: formatCurrency({ value: calculateTotals().totalPrice })
+      totalQuantity: calculateTotals().salesByProductTotalQuantity,
+      totalPrice: formatCurrency({ value: calculateTotals().salesByProductTotalPrice })
     }
   ];
-
-  return <SimpleTable columns={columns} data={dataFormatted} footerData={footerData} />;
+  const salesByCategoryFooterData = [
+    {
+      category: "Total",
+      totalQuantitySold: calculateTotals().salesByCategoryTotalQuantity,
+      totalItemsSold: formatCurrency({ value: calculateTotals().salesByCategoryTotalPrice })
+    }
+  ];
+  return (
+    <Tabs defaultValue="sales-by-products" className="w-full">
+      <TabsList className="grid w-full grid-cols-2">
+        <TabsTrigger value="sales-by-products">Sales by Products</TabsTrigger>
+        <TabsTrigger value="sales-by-categories">Sales by Categories</TabsTrigger>
+      </TabsList>
+      <TabsContent value="sales-by-products">
+        <SimpleTable columns={salesByProductsColumns} data={salesByProductData} footerData={salesByProductFooterData} />
+      </TabsContent>
+      <TabsContent value="sales-by-categories">
+        <SimpleTable columns={salesByCategoriesColumns} data={salesByCategory} footerData={salesByCategoryFooterData} />
+      </TabsContent>
+    </Tabs>
+  );
 };
 
 export default SalesAnalysisListView;
