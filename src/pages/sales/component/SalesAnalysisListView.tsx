@@ -62,15 +62,19 @@ const SalesAnalysisListView: FC<SalesAnalysisListViewProps> = ({ salesByProduct,
   ];
   return (
     <Tabs defaultValue="sales-by-products" className="w-full">
-      <TabsList className="grid w-full grid-cols-2">
+      <TabsList className="grid w-full grid-cols-3">
         <TabsTrigger value="sales-by-products">Sales by Products</TabsTrigger>
         <TabsTrigger value="sales-by-categories">Sales by Categories</TabsTrigger>
+        <TabsTrigger value="sales-by-cashier">Sales by Cashier</TabsTrigger>
       </TabsList>
       <TabsContent value="sales-by-products">
         <SimpleTable columns={salesByProductsColumns} data={salesByProductData} footerData={salesByProductFooterData} />
       </TabsContent>
       <TabsContent value="sales-by-categories">
         <SimpleTable columns={salesByCategoriesColumns} data={salesByCategory} footerData={salesByCategoryFooterData} />
+      </TabsContent>
+      <TabsContent value="sales-by-cashier">
+        <h1 className="text-center">Coming soon</h1>
       </TabsContent>
     </Tabs>
   );
