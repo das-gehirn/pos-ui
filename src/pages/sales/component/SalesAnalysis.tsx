@@ -49,7 +49,14 @@ const SalesAnalysis = () => {
     query: queryObject
   });
   const { data: singleSalesAnalysis, isFetching: isFetchingSingleAnalysis } = useGeneralQuery<
-    GetManyProps<{ productName: string; totalQuantity: number; totalPrice: number }[]>
+    GetManyProps<{
+      salesByProduct: { productName: string; totalQuantity: number; totalPrice: number }[];
+      salesByCategoryReport: {
+        category: string;
+        totalItemsSold: number;
+        totalQuantitySold: number;
+      }[];
+    }>
   >({
     queryKey: ["singleSalesAnalysis", selectedDate],
     url: "/sales/single/analysis",
@@ -64,7 +71,6 @@ const SalesAnalysis = () => {
   //   enabled: Boolean(selectedDate),
   //   query: { date: selectedDate || "" }
   // });
-
 
   useEffect(() => {
     if (queryObject && queryObject.year && queryObject.month) {
@@ -277,23 +283,28 @@ const SalesAnalysis = () => {
                 <div className="mt-10 flex items-center justify-center">{isFetchingSingleAnalysis && <Loader />}</div>
               </AlertDialogHeader>
 
-              {singleSalesAnalysis?.data && singleSalesAnalysis?.data.length > 0 && (
+              {singleSalesAnalysis?.data && singleSalesAnalysis?.data.salesByProduct?.length > 0 && (
                 <>
                   <div className="flex md:items-end md:justify-end gap-4 items-center justify-center my-5">
                     <span> Overall Total:</span>
                     <span className="text-sm font-bold">
-                      {formatCurrency({ value: calculateSingleSalesTotal(singleSalesAnalysis.data) })}
+                      {formatCurrency({ value: calculateSingleSalesTotal(singleSalesAnalysis.data?.salesByProduct) })}
                     </span>
                   </div>
                   <div className="my-10">
-                    {singleSalesAnalysis?.data && singleSalesAnalysis.data.length > 0 && (
-                      <SalesAnalysisListView data={singleSalesAnalysis.data} />
+                    {singleSalesAnalysis?.data && singleSalesAnalysis.data.salesByProduct?.length > 0 && (
+                      <SalesAnalysisListView
+                        salesByProduct={singleSalesAnalysis.data?.salesByProduct || []}
+                        salesByCategoryReport={singleSalesAnalysis?.data?.salesByCategoryReport || []}
+                      />
                     )}
                   </div>
                 </>
               )}
               {!singleSalesAnalysis?.data ||
-                (!singleSalesAnalysis?.data.length && <div className="font-bold text-center my-10">No Data found</div>)}
+                (!singleSalesAnalysis?.data.salesByProduct?.length && (
+                  <div className="font-bold text-center my-10">No Data found</div>
+                ))}
             </div>
             {/* CONTENT END */}
             <AlertDialogFooter>
