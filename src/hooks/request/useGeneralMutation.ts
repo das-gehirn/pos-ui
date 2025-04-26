@@ -12,10 +12,7 @@ export const useGeneralMutation = <T>(mutationData: {
 }) => {
   const { mutationKey, url, httpMethod, requireAuth = true } = mutationData;
   const queryClient = useQueryClient();
-  // Conditionally call useBaseRequestService based on requireAuth
-  const { axiosInstance } = requireAuth
-    ? useBaseRequestService({ useToken: true, tokenType: "accessToken" })
-    : useBaseRequestService();
+  const { axiosInstance } = useBaseRequestService({ useToken: requireAuth, tokenType: "accessToken" });
 
   const { data, isPending, mutate } = useMutation({
     mutationFn: async (data: { payload: T }) => {
