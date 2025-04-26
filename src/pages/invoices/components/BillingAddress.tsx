@@ -1,12 +1,12 @@
 import { formatPhoneToString } from "@/helpers";
-import { AddressProps, PhoneProps } from "@/interfaces";
+import { PhoneProps } from "@/interfaces";
 import { PencilLine } from "lucide-react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
 
 interface BillingAddressProps {
   type: "from" | "to";
-  address: AddressProps;
+  address: string;
   phone?: PhoneProps;
   email: string;
   name: string;
@@ -28,14 +28,7 @@ const BillingAddress: FC<BillingAddressProps> = ({
       <h1 className="text-2x font-medium">{name}</h1>
       <span className="text-xs">{email}</span>
       <div className="my-7 text-sm">
-        {address?.city && (
-          <>
-            <p>
-              {address?.poBox}, {address?.state}
-            </p>
-            <p>{address?.city}, Ghana</p>
-          </>
-        )}
+        {address}
         <p>{formatPhoneToString(phone)}</p>
         {showEditAddress && (
           <Link to={editAddressURL || ""} className="font-bold text-primary my-3 flex items-center gap-x-1">
