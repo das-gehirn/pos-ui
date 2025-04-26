@@ -4,6 +4,7 @@ import { generalSidebarRoutes, menuSidebarRoutes } from "@/route/sidebar";
 import { ArrowRightLeft, ChevronsLeft } from "lucide-react";
 import { Button } from "../ui/button";
 import useAuthStore from "@/store/auth";
+import { UserRole } from "@/interfaces/user";
 const DashboardSidebar = ({
   displaySidebar,
   handleDisplaySidebar
@@ -13,7 +14,10 @@ const DashboardSidebar = ({
 }) => {
   const { authUser } = useAuthStore();
 
-  const menuSidebarRoutesLinks = menuSidebarRoutes(authUser?.role || "", authUser?.permission?.access || "");
+  const menuSidebarRoutesLinks = menuSidebarRoutes(
+    (authUser?.role || "") as UserRole,
+    authUser?.permission?.access || ""
+  );
   const generalSidebarRoutesLinks = generalSidebarRoutes(authUser?.role);
 
   return (
