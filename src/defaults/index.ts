@@ -39,6 +39,7 @@ import {
 import { InvoiceProps } from "@/interfaces/invoice";
 import { ExpenditureProps } from "@/interfaces/expenditure";
 import { StockCreditorPaymentProps } from "@/interfaces/stockPayments";
+import { StockAdjustmentProps } from "@/interfaces/stockAdjustment";
 
 export const mopArr: MOP[] = ["cash", "mobile money", "bank", "cheque"];
 export const defaultPlugin: DefaultPluginProps = {
@@ -519,5 +520,17 @@ export const expenditureDefault: () => ExpenditureProps = () => {
     transactionId: undefined,
     transactionNumber: undefined,
     accountId: ""
+  };
+};
+
+export const stockAdjustmentDefault = (): StockAdjustmentProps => {
+  return {
+    ...defaultPlugin,
+    productId: "",
+    quantityAdjusted: 0,
+    adjustmentType: "increment",
+    reason: "",
+    accountId: "",
+    warehouseId: ""
   };
 };
