@@ -155,7 +155,7 @@ const InvoiceEditFields: FC<InvoiceEditFieldsProps> = ({
         </div>
         <div className="md:flex items-center justify-between relative">
           <BillingAddress
-            address={{ poBox: "P.O BOX 34", state: "Ekwamkurom", city: "Agona Swdru" }}
+            address={{ poBox: "P.O BOX 34", state: "Ekwamkrom", city: "Agona Swedru" }}
             email="admin@oseikrom.com"
             name="Oseikrom Hardware Enterprise"
             phone={{ number: "543814868", country: "GH", prefix: "233" }}
