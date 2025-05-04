@@ -1,4 +1,4 @@
-import { formatPhoneToString } from "@/helpers";
+import { formatAddressToString, formatPhoneToString } from "@/helpers";
 import { AddressProps, PhoneProps } from "@/interfaces";
 import { PencilLine } from "lucide-react";
 import { FC } from "react";
@@ -28,14 +28,7 @@ const BillingAddress: FC<BillingAddressProps> = ({
       <h1 className="text-2x font-medium">{name}</h1>
       <span className="text-xs">{email}</span>
       <div className="my-7 text-sm">
-        {address?.city && (
-          <>
-            <p>
-              {address?.poBox}, {address?.state}
-            </p>
-            <p>{address?.city}, Ghana</p>
-          </>
-        )}
+        {formatAddressToString(address)}
         <p>{formatPhoneToString(phone)}</p>
         {showEditAddress && (
           <Link to={editAddressURL || ""} className="font-bold text-primary my-3 flex items-center gap-x-1">

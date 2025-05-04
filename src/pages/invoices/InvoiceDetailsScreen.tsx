@@ -11,7 +11,7 @@ import InvoiceItem from "./components/InvoiceItem";
 import InvoiceSummary from "./components/InvoiceSummary";
 import { computeInvoiceAmounts } from "@/utils";
 import { startCase } from "lodash";
-import { formatCurrency } from "@/helpers";
+import { formatAddressToString, formatCurrency } from "@/helpers";
 import { format } from "date-fns";
 
 const InvoiceDetailsScreen = () => {
@@ -31,7 +31,8 @@ const InvoiceDetailsScreen = () => {
     discount: data?.discount
   });
 
-  const invoiceStatusColors: Record<string, any> = {
+  type variants = "destructive" | "default" | "secondary" | "outline";
+  const invoiceStatusColors: Record<string, variants> = {
     "not paid": "destructive",
     paid: "default",
     "partly paid": "secondary",
@@ -88,16 +89,16 @@ const InvoiceDetailsScreen = () => {
           <h1 className="text-xl font-medium border-b pb-2">Invoice Batch 2023</h1>
           <div className="md:flex items-center justify-between relative py-4">
             <BillingAddress
-              address={{ poBox: "P.O BOX 34", state: "Ekwamkrom", city: "Agona Swedru" }}
+              address="C0-0056-0664 Gomoa Ekwamkrom Police Barrier"
               email="admin@oseikrom.com"
               name="Oseikrom Hardware Enterprise"
-              phone={{ number: "543814868", country: "GH", prefix: "233" }}
+              phone={{ number: "557921536", country: "GH", prefix: "233" }}
               type="from"
               showEditAddress={false}
             />
             <div className="absolute md:border-r h-full bg-red-50 left-1/2 mt-4"></div>
             <BillingAddress
-              address={data?.customerData?.address || {}}
+              address={formatAddressToString(data?.customerData?.address || {})}
               email={data?.customerData?.email || ""}
               name={`${data?.customerData?.firstName || "N/A"} ${data?.customerData?.lastName || "N/A"}`}
               phone={data?.customerData?.phone}
