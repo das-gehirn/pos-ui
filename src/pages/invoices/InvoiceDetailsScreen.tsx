@@ -11,7 +11,7 @@ import InvoiceItem from "./components/InvoiceItem";
 import InvoiceSummary from "./components/InvoiceSummary";
 import { computeInvoiceAmounts } from "@/utils";
 import { startCase } from "lodash";
-import { formatAddressToString, formatCurrency } from "@/helpers";
+import { formatCurrency } from "@/helpers";
 import { format } from "date-fns";
 
 const InvoiceDetailsScreen = () => {
@@ -89,7 +89,6 @@ const InvoiceDetailsScreen = () => {
           <h1 className="text-xl font-medium border-b pb-2">Invoice Batch 2023</h1>
           <div className="md:flex items-center justify-between relative py-4">
             <BillingAddress
-              address="C0-0056-0664 Gomoa Ekwamkrom Police Barrier"
               email="admin@oseikrom.com"
               name="Oseikrom Hardware Enterprise"
               phone={{ number: "557921536", country: "GH", prefix: "233" }}
@@ -98,7 +97,7 @@ const InvoiceDetailsScreen = () => {
             />
             <div className="absolute md:border-r h-full bg-red-50 left-1/2 mt-4"></div>
             <BillingAddress
-              address={formatAddressToString(data?.customerData?.address || {})}
+              address={data?.customerData?.address || {}}
               email={data?.customerData?.email || ""}
               name={`${data?.customerData?.firstName || "N/A"} ${data?.customerData?.lastName || "N/A"}`}
               phone={data?.customerData?.phone}
