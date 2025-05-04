@@ -1,4 +1,7 @@
-export type PermissionOperation = "create" | "read" | "update" | "delete";
+import { UserRole } from "@/interfaces/user";
+import { isSpecialRole } from ".";
+
+export type PermissionOperation = "list" | "create" | "read" | "update" | "delete" | "export";
 export type PermissionString =
   | "users"
   | "settings"
@@ -28,9 +31,9 @@ export const permissionOperations: PermissionOperation[] = ["create", "read", "u
 export const hasPermission = (
   userPermission: string,
   permissions: [PermissionString, PermissionOperation],
-  role?: string
+  role?: UserRole
 ): boolean => {
-  if (role && role === "admin") return true;
+  if ((role && role === "admin") || (role && isSpecialRole(role))) return true;
   if (!userPermission || !permissions) return false;
 
   const [permissionService, permissionOperation] = permissions;
@@ -66,22 +69,36 @@ export const PERMISSIONS_LIST: PermissionString[] = [
 export const PERMISSIONS = structurePermissionsObject(PERMISSIONS_LIST);
 
 function structurePermissionsObject(permissionsArray: PermissionString[]): IPermission {
-  const permissions: any = {};
+  const permissions: Partial<
+    Record<
+      PermissionString,
+      {
+        create: number;
+        read: number;
+        update: number;
+        delete: number;
+        export: number;
+      }
+    >
+  > = {};
+
   for (let i = 0; i < permissionsArray.length; i++) {
     const resource = permissionsArray[i];
     permissions[resource] = {
-      create: 32 + (i * 4 + 1),
-      read: 32 + (i * 4 + 2),
-      update: 32 + (i * 4 + 3),
-      delete: 32 + (i * 4 + 4)
+      create: 32 + (i * 5 + 1),
+      read: 32 + (i * 5 + 2),
+      update: 32 + (i * 5 + 3),
+      delete: 32 + (i * 5 + 4),
+      export: 32 + (i * 5 + 5)
     };
   }
-  return permissions;
+
+  return permissions as IPermission;
 }
 
 export const decipherPermission = (cypheredPermissions: string): Record<PermissionString, PermissionOperation[]> => {
   const permissionsList = PERMISSIONS;
-  let permissions: Record<PermissionString, PermissionOperation[]> = {} as Record<
+  const permissions: Record<PermissionString, PermissionOperation[]> = {} as Record<
     PermissionString,
     PermissionOperation[]
   >;

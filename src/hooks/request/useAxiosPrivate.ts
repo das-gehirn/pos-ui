@@ -26,60 +26,49 @@ export const useBaseRequestService = (
     baseURL: VITE_BASE_API_URL,
     withCredentials: true
   });
-  try {
-    const { useToken, tokenType, contentType, Accept } = options;
-    // check if request should use accessToken
-    if (useToken && tokenType) {
-      const accessTokenFromStore = authUser?.accessToken;
-      // axios should attach access token to each request
-      axiosInstance.interceptors.request.use(
-        (config) => {
-          config.headers["Content-Type"] = contentType;
-          config.headers["Accept"] = Accept;
-          if (!config.headers["Authorization"]) {
-            config.headers["Authorization"] = `Bearer ${accessTokenFromStore}`;
-          }
-          return config;
-        },
-        (err) => Promise.reject(err)
-      );
 
-      // if response comes in and there is a 403 error, axios should fetch a new access token and retry the request again
-      axiosInstance.interceptors.response.use(
-        (response) => response,
-        async (error) => {
-          const prevRequest = error?.config;
-          if (error?.response?.status === 401 && !prevRequest?.sent) {
-            prevRequest.sent = true;
-            const response = await refreshToken();
-            prevRequest.headers["Authorization"] = `Bearer ${response.accessToken}`;
-            axiosInstance(prevRequest);
-          }
-          return Promise.reject(error);
+  const { useToken, tokenType, contentType, Accept } = options;
+  // check if request should use accessToken
+  if (useToken && tokenType) {
+    const accessTokenFromStore = authUser?.accessToken;
+    // axios should attach access token to each request
+    axiosInstance.interceptors.request.use(
+      (config) => {
+        config.headers["Content-Type"] = contentType;
+        config.headers["Accept"] = Accept;
+        if (!config.headers["Authorization"]) {
+          config.headers["Authorization"] = `Bearer ${accessTokenFromStore}`;
         }
-      );
-    }
-  } catch (e: any) {
-    throw e;
+        return config;
+      },
+      (err) => Promise.reject(err)
+    );
+
+    // if response comes in and there is a 403 error, axios should fetch a new access token and retry the request again
+    axiosInstance.interceptors.response.use(
+      (response) => response,
+      async (error) => {
+        const prevRequest = error?.config;
+        if (error?.response?.status === 401 && !prevRequest?.sent) {
+          prevRequest.sent = true;
+          const response = await refreshToken();
+          prevRequest.headers["Authorization"] = `Bearer ${response.accessToken}`;
+          axiosInstance(prevRequest);
+        }
+        return Promise.reject(error);
+      }
+    );
   }
 
   const refreshToken = async () => {
-    try {
-      const { data } = await axiosInstance.get<BaseResponse<AuthUserResponse>>("/auth/refresh");
-      saveAuthUser(data.response);
+    const { data } = await axiosInstance.get<BaseResponse<AuthUserResponse>>("/auth/refresh");
+    saveAuthUser(data.response);
 
-      return data.response;
-    } catch (error) {
-      throw error;
-    }
+    return data.response;
   };
   const getAuth = async () => {
-    try {
-      const { data } = await axiosInstance.get<BaseResponse<AuthUserResponse>>("/auth");
-      return data.response;
-    } catch (error) {
-      throw error;
-    }
+    const { data } = await axiosInstance.get<BaseResponse<AuthUserResponse>>("/auth");
+    return data.response;
   };
 
   const getInitData = async () => {

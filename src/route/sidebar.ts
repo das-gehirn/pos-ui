@@ -37,7 +37,7 @@ export interface MenuSidebarRoutes {
   title: string;
   routeLinks: MenuSidebarRoute[];
 }
-export const menuSidebarRoutes = (userRole: string, userPermission: string): MenuSidebarRoutes => {
+export const menuSidebarRoutes = (userRole: UserRole, userPermission: string): MenuSidebarRoutes => {
   return {
     title: "Menu",
     routeLinks: [
@@ -155,8 +155,8 @@ export const menuSidebarRoutes = (userRole: string, userPermission: string): Men
           },
           {
             title: "Stock Adjustment",
-            url: "/users",
-            isDisabled: true,
+            url: "/stock-adjustments",
+            isDisabled: false,
             isVisible: hasPermission(userPermission, ["stockAdjustments", "read"], userRole)
           }
         ]
