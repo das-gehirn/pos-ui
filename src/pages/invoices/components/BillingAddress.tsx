@@ -6,7 +6,7 @@ import { Link } from "react-router-dom";
 
 interface BillingAddressProps {
   type: "from" | "to";
-  address: AddressProps;
+  address?: AddressProps;
   phone?: PhoneProps;
   email: string;
   name: string;
@@ -28,7 +28,8 @@ const BillingAddress: FC<BillingAddressProps> = ({
       <h1 className="text-2x font-medium">{name}</h1>
       <span className="text-xs">{email}</span>
       <div className="my-7 text-sm">
-        {formatAddressToString(address)}
+        {address && formatAddressToString(address)}
+        {type === "from" && "C0-0056-0664 Gomoa Ekwamkrom Police Barrier"}
         <p>{formatPhoneToString(phone)}</p>
         {showEditAddress && (
           <Link to={editAddressURL || ""} className="font-bold text-primary my-3 flex items-center gap-x-1">
