@@ -107,7 +107,7 @@ const CreateStockAdjustmentScreen = () => {
       quantity = formValues?.quantity;
     }
     return quantity;
-  }, [formValues?.productId]);
+  }, [formValues?.productId, formValues?.type, formValues?.quantity]);
 
   return (
     <DashboardLayout>
@@ -165,7 +165,7 @@ const CreateStockAdjustmentScreen = () => {
               text={"Create"}
               onClick={onsubmitHandler}
               loading={isPending}
-              disabled={isPending || Object.keys(errors).length > 0 || !Object.keys(payload).length}
+              disabled={isPending || !Object.keys(payload).length}
               className="md:w-[200px]"
             />
           </div>
