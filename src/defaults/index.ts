@@ -527,8 +527,8 @@ export const stockAdjustmentDefault = (): StockAdjustmentProps => {
   return {
     ...defaultPlugin,
     productId: "",
-    quantityAdjusted: 0,
-    adjustmentType: "increment",
+    quantity: 0,
+    type: undefined,
     reason: "",
     accountId: "",
     warehouseId: ""
