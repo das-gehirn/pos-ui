@@ -1,4 +1,5 @@
 import { DefaultPluginProps } from ".";
+import { ProductProps } from "./products";
 
 type AdjustmentType = "increment" | "decrement";
 export const adjustmentTypes: AdjustmentType[] = ["increment", "decrement"];
@@ -16,4 +17,5 @@ export interface StockAdjustmentProps extends DefaultPluginProps {
   reference?: string; // External reference ID (e.g., orderId, returnId)
   accountId: string;
   warehouseId: string;
+  product?: ProductProps;
 }
