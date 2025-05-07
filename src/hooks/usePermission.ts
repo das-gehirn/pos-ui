@@ -1,14 +1,14 @@
 import {
   PERMISSIONS_LIST,
   PermissionOperation,
-  PermissionString,
   hasPermission,
-  permissionOperations
+  permissionOperations,
+  PermissionResource
 } from "@/helpers/permission";
 import useAuthStore from "@/store/auth";
 import { useMemo } from "react";
 // Define the permission keys dynamically
-type PermissionKeys = `${"can"}${Capitalize<PermissionOperation>}${Capitalize<PermissionString>}`;
+type PermissionKeys = `${"can"}${Capitalize<PermissionOperation>}${Capitalize<PermissionResource>}`;
 
 // Define a record type for permissions
 type Permissions = Record<PermissionKeys, boolean>;
