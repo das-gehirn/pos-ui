@@ -1,8 +1,8 @@
 import { UserRole } from "@/interfaces/user";
 import { isSpecialRole } from ".";
 
-export type PermissionOperation = "list" | "create" | "read" | "update" | "delete" | "export";
-export type PermissionString =
+export type PermissionOperation = "create" | "read" | "update" | "delete";
+export type PermissionResource =
   | "users"
   | "settings"
   | "calendar"
@@ -24,24 +24,23 @@ export type PermissionString =
   | "stockAdjustments"
   | "invoice"
   | "sales"
-  | "payment"
+  | "stockCreditorsPayment"
   | "stockCreditors";
-export type IPermission = Record<PermissionString, Record<PermissionOperation, number>>;
+export type IPermission = Record<PermissionResource, Record<PermissionOperation, number>>;
 export const permissionOperations: PermissionOperation[] = ["create", "read", "update", "delete"];
 export const hasPermission = (
   userPermission: string,
-  permissions: [PermissionString, PermissionOperation],
+  permissions: [PermissionResource, PermissionOperation],
   role?: UserRole
 ): boolean => {
-  if ((role && role === "admin") || (role && isSpecialRole(role))) return true;
+  if ((role && role === "admin") || (role && isSpecialRole(role)) || userPermission === "*") return true;
   if (!userPermission || !permissions) return false;
 
   const [permissionService, permissionOperation] = permissions;
-  if (userPermission === "*" && permissionService != "calendar") return true;
   return userPermission.includes(String.fromCharCode(PERMISSIONS[permissionService][permissionOperation]));
 };
 
-export const PERMISSIONS_LIST: PermissionString[] = [
+export const PERMISSIONS_LIST: PermissionResource[] = [
   "users",
   "settings",
   "calendar",
@@ -62,15 +61,16 @@ export const PERMISSIONS_LIST: PermissionString[] = [
   "invoice",
   "sales",
   "inventory",
-  "stockCreditors"
+  "stockCreditors",
+  "stockCreditorsPayment"
 ];
 
 export const PERMISSIONS = structurePermissionsObject(PERMISSIONS_LIST);
 
-function structurePermissionsObject(permissionsArray: PermissionString[]): IPermission {
+function structurePermissionsObject(permissionsArray: PermissionResource[]): IPermission {
   const permissions: Partial<
     Record<
-      PermissionString,
+      PermissionResource,
       {
         create: number;
         read: number;
@@ -95,15 +95,15 @@ function structurePermissionsObject(permissionsArray: PermissionString[]): IPerm
   return permissions as IPermission;
 }
 
-export const decipherPermission = (cypheredPermissions: string): Record<PermissionString, PermissionOperation[]> => {
+export const decipherPermission = (cypheredPermissions: string): Record<PermissionResource, PermissionOperation[]> => {
   const permissionsList = PERMISSIONS;
-  const permissions: Record<PermissionString, PermissionOperation[]> = {} as Record<
-    PermissionString,
+  const permissions: Record<PermissionResource, PermissionOperation[]> = {} as Record<
+    PermissionResource,
     PermissionOperation[]
   >;
 
   for (const key in permissionsList) {
-    const mainKey = key as PermissionString;
+    const mainKey = key as PermissionResource;
     const permission = permissionsList[mainKey];
 
     if (typeof permission === "object") {
