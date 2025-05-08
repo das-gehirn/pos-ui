@@ -3,14 +3,14 @@ import { Outlet, useLocation, Navigate, useNavigate } from "react-router-dom";
 import { AxiosError } from "axios";
 
 import Preloader from "@/components/Preloader";
-import { PermissionOperation, PermissionString, hasPermission } from "@/helpers/permission";
+import { PermissionOperation, PermissionResource, hasPermission } from "@/helpers/permission";
 import { Meta } from "@/interfaces/route";
 import { UserRole, specialRoles } from "@/interfaces/user";
 import { useBaseRequestService } from "@/hooks/request/useAxiosPrivate";
 import useAuthStore from "@/store/auth";
 
 interface CheckAuthProps {
-  permission?: [PermissionString, PermissionOperation];
+  permission?: [PermissionResource, PermissionOperation];
   allowedRoles?: UserRole[];
   meta?: Meta;
 }
@@ -59,7 +59,7 @@ const CheckAuth: FC<CheckAuthProps> = ({ permission, allowedRoles, meta }) => {
 
   const userRole = auth?.role;
   const permissionVerified =
-    permission && permission.length ? hasPermission(String(auth?.permission?.access), permission) : true;
+    permission && permission.length ? hasPermission(auth?.userPermission || {}, permission) : true;
 
   if (userRole && [...specialRoles, "admin"].includes(userRole)) {
     return <Outlet context={{ meta }} />;

@@ -1,4 +1,4 @@
-import { PERMISSIONS_LIST, PermissionString } from "@/helpers/permission";
+import { PERMISSIONS_LIST, PermissionResource } from "@/helpers/permission";
 import { PhoneProps } from "@/interfaces";
 import { Discount, InvoiceItem } from "@/interfaces/invoice";
 
@@ -82,7 +82,7 @@ export const USER_STATUS_OPTIONS = [
 ];
 
 const notValidPermission = ["settings", "faqs", "calendar"];
-export const permissionResources: PermissionString[] = PERMISSIONS_LIST.filter((resource) => {
+export const permissionResources: PermissionResource[] = PERMISSIONS_LIST.filter((resource) => {
   return !notValidPermission.includes(resource);
 });
 export const isActualObject = (obj: Record<string, any>): boolean =>

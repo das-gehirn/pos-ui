@@ -6,7 +6,6 @@ import { GetManyProps } from "@/hooks/types";
 import { useSetQueryParam } from "@/hooks/useSetQueryParam";
 import { usePermission } from "@/hooks/usePermission";
 import { useNavigate } from "react-router-dom";
-import { invoiceTableFilters } from "@/tableSchema/invoice";
 import { stockAdjustmentTableSchema } from "@/tableSchema/stockAdjustment";
 import { StockAdjustmentProps } from "@/interfaces/stockAdjustment";
 
@@ -42,7 +41,6 @@ const StockAdjustmentListScreen = () => {
           isLoading={isFetching}
           loadingText="Fetching stock adjustment data"
           paginator={data?.paginator || null}
-          filters={invoiceTableFilters}
           allowRowSelect={false}
         />
       </Container>

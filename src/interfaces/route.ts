@@ -1,4 +1,4 @@
-import { PermissionOperation, PermissionString } from "@/helpers/permission";
+import { PermissionOperation, PermissionResource } from "@/helpers/permission";
 import { UserRole } from "./user";
 
 export interface Meta {
@@ -9,7 +9,7 @@ export interface Meta {
 }
 export interface RoutesProps {
   url: string;
-  permission?: [PermissionString, PermissionOperation];
+  permission?: [PermissionResource, PermissionOperation];
   requireAuth?: boolean;
   allowedRoles?: UserRole[];
   meta?: Meta;

@@ -1,121 +1,99 @@
-import { useState, useEffect, useCallback } from "react";
-import { PermissionString, permissionOperations, decipherPermission, PermissionOperation } from "@/helpers/permission";
+import { useState, useEffect, useCallback, memo, useMemo } from "react";
+import { PermissionResource, permissionOperations, PermissionOperation } from "@/helpers/permission";
 import CheckBoxField from "../combo/CheckBoxField";
-import { capitalize, startCase } from "lodash";
+import { capitalize, get, isEqual, startCase } from "lodash";
 import { HandlerProps } from "../type";
-import React from "react";
+import { DeepOptional } from "@/interfaces";
 
 const Permission = ({
   permissionResources,
-  cypheredPermissions,
+  userPermission,
   fieldKey,
   onChange,
   disabled
 }: {
-  permissionResources: PermissionString[];
-  cypheredPermissions?: string;
+  permissionResources: PermissionResource[];
+  userPermission: DeepOptional<{
+    [key in PermissionResource]: PermissionOperation[];
+  }>;
   fieldKey: string;
   disabled?: boolean;
   onChange: (data: {
     key: string;
-    value: {
-      [key in PermissionString]: PermissionOperation[];
-    };
+    value: DeepOptional<{
+      [key in PermissionResource]: PermissionOperation[];
+    }>;
   }) => void;
 }) => {
-  const [permissions, setPermissions] = useState<{
-    [key in PermissionString]: PermissionOperation[];
-  }>(
-    permissionResources.reduce((acc: any, permission) => {
-      acc[permission] = [];
-      return acc;
-    }, {})
-  );
+  const [permissions, setPermissions] = useState<
+    DeepOptional<{
+      [key in PermissionResource]: PermissionOperation[];
+    }>
+  >({});
 
-  useEffect(() => {
-    if (cypheredPermissions) {
-      const decryptedPermissions = decipherPermission(cypheredPermissions);
-      setPermissions(decryptedPermissions);
-    }
-  }, [cypheredPermissions]);
+  const [checkAll, setCheckAll] = useState(false);
 
   const handleTogglePermission = useCallback(
-    (permission: PermissionString, operation: PermissionOperation) => {
+    (permission: PermissionResource, operation: PermissionOperation) => {
       setPermissions((prevPermissions) => {
-        const currentPermissions = prevPermissions[permission] || [];
-        let updatedPermissions: PermissionOperation[];
+        const currentPermissions = (prevPermissions?.[permission] || []) as PermissionOperation[];
 
-        if (operation === "read") {
-          if (currentPermissions.includes("read")) {
-            // Remove 'read' and all other permissions
-            updatedPermissions = [];
-          } else {
-            // Add 'read'
-            updatedPermissions = ["read"];
-          }
+        const updatedPermissions = currentPermissions.includes(operation)
+          ? currentPermissions.filter((op) => op !== operation)
+          : [...currentPermissions, operation];
+
+        const newPermissions = { ...prevPermissions };
+
+        if (updatedPermissions.length > 0) {
+          newPermissions[permission] = updatedPermissions;
         } else {
-          if (!currentPermissions.includes("read")) {
-            // If 'read' is not included, ignore any other operations
-            return prevPermissions;
-          }
-          if (currentPermissions.includes(operation)) {
-            updatedPermissions = currentPermissions.filter((op) => op !== operation);
-          } else {
-            updatedPermissions = [...currentPermissions, operation];
-          }
+          delete newPermissions[permission];
         }
-
-        const newPermissions = {
-          ...prevPermissions,
-          [permission]: updatedPermissions
-        };
-
-        // Remove keys with empty arrays
-        Object.keys(newPermissions).forEach((key) => {
-          if (newPermissions[key as PermissionString].length === 0) {
-            delete newPermissions[key as PermissionString];
-          }
-        });
 
         onChange({ key: fieldKey, value: newPermissions });
 
-        return newPermissions as {
-          [key in PermissionString]: PermissionOperation[];
-        };
+        return newPermissions as { [key in PermissionResource]?: PermissionOperation[] };
       });
     },
-    [onChange, fieldKey]
+    [fieldKey, onChange]
   );
-
   const handleCheckAllPermissions = useCallback(
     (data: HandlerProps) => {
-      const result = permissionResources.reduce((acc: any, permission) => {
-        acc[permission] = data.value ? permissionOperations : [];
-        return acc;
-      }, {});
-      setPermissions(result);
+      if (data.value) {
+        const result = permissionResources.reduce((acc: any, permission) => {
+          acc[permission] = permissionOperations;
+          return acc;
+        }, {});
+        setPermissions(result);
+      } else {
+        setPermissions({});
+      }
+      setCheckAll(data.value);
     },
     [permissionResources]
   );
 
   useEffect(() => {
-    onChange({ key: fieldKey, value: permissions });
-  }, [permissions, onChange, fieldKey]);
+    if (permissions) {
+      onChange({ key: fieldKey, value: permissions || {} });
+    }
+  }, [permissions]);
 
   const formatPermissionResource = useCallback((resource: string) => {
     const spacedStr = resource.replace(/([A-Z])/g, " $1");
     return startCase(spacedStr.trim());
   }, []);
 
-  const disablePermissionResource = useCallback(
-    (resource: PermissionString) => {
-      return !(permissions[resource] && permissions[resource].length && permissions[resource].includes("read"));
-    },
-    [permissions]
-  );
+  useMemo(() => {
+    if (userPermission) {
+      if (!isEqual(userPermission, permissions)) {
+        setPermissions(userPermission);
+      }
+    }
+  }, [userPermission, fieldKey]);
 
   return (
-    <div className="flex flex-col">
+    <div className="flex flex-col dark:text-dark_text-300">
       <div className="mb-5 flex items-center gap-4">
         <p>Check all permissions</p>
         <CheckBoxField
@@ -123,6 +101,8 @@ const Permission = ({
           className="w-[20px] h-[20px]"
           disabled={disabled}
           fieldKey="checkAll"
+          value={checkAll}
+          checked={checkAll}
         />
       </div>
 
@@ -141,16 +121,19 @@ const Permission = ({
           <div className="flex gap-10 justify-between items-center overflow-x-auto" key={permission}>
             <p className="flex-1 mb-2 pb-1">{formatPermissionResource(permission)}</p>
             <div className="flex items-center justify-between flex-1 gap-4">
-              {permissionOperations.map((operation, index) => (
-                <CheckBoxField
-                  key={index}
-                  checked={permissions[permission] && permissions[permission].includes(operation)}
-                  handleFieldChange={() => handleTogglePermission(permission, operation)}
-                  className="w-[20px] h-[20px]"
-                  disabled={disabled || (disablePermissionResource(permission) && operation !== "read")}
-                  fieldKey={fieldKey}
-                />
-              ))}
+              {permissionOperations.map((operation, index) => {
+                const permissionObj = get(permissions, permission, "") || [];
+                return (
+                  <CheckBoxField
+                    key={index}
+                    checked={Boolean(permissionObj.length > 0 && permissionObj.includes(operation))}
+                    handleFieldChange={() => handleTogglePermission(permission, operation)}
+                    className="w-[20px] h-[20px]"
+                    disabled={disabled}
+                    fieldKey={fieldKey}
+                  />
+                );
+              })}
             </div>
           </div>
         ))}
@@ -159,4 +142,4 @@ const Permission = ({
   );
 };
 
-export default React.memo(Permission);
+export default memo(Permission);

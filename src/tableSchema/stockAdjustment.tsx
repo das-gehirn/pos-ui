@@ -26,7 +26,7 @@ export const stockAdjustmentTableSchema: ColumnDef<StockAdjustmentProps>[] = [
     accessorKey: "type",
     header: ({ column }) => <DataTableColumnHeader column={column} title="Adjustment Type" />,
     cell: ({ row }) => {
-      return <div className="flex space-x-2">{startCase(row.getValue("type "))}</div>;
+      return <div className="flex space-x-2">{startCase(row.getValue("type"))}</div>;
     },
     filterFn: (row, id, value) => {
       return value.includes(row.getValue(id));

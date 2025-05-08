@@ -140,7 +140,7 @@ const EditUserFields: FC<EditUserFieldsProps> = ({
             onChange={handleFormFieldChange}
             fieldKey="userPermission"
             permissionResources={permissionResources}
-            cypheredPermissions={formFields?.permission?.access || ""}
+            userPermission={formFields?.userPermission}
           />
         )}
         <div className="flex items-center justify-end">
