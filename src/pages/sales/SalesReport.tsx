@@ -81,11 +81,15 @@ const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin, showSearch = true
         isLoading={isFetching || printLoading}
         loadingText={isFetching ? "Fetching sales report" : printLoading ? "Printing receipt" : ""}
         filters={filters}
-        showSearchSelection={isAdmin}
+        showSearchSelection={true}
         searchSelectionOptions={[
           { label: "Customer", value: "customerId" },
-          { label: "All", value: "" },
-          { label: "Teller", value: "createdBy" }
+          ...(isAdmin
+            ? [
+                { label: "All", value: "" },
+                { label: "Teller", value: "createdBy" }
+              ]
+            : [])
         ]}
         handleRowClick={(data: Record<string, any>) => navigate(`/sales/${data._id}`)}
         showSearch={showSearch}
