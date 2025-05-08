@@ -37,7 +37,7 @@ const CreateUserScreen = () => {
 
     const payload = objectDifference(createDefaultUser(), formValues);
     mutate(
-      { payload: payload as any },
+      { payload: payload as UserProps },
       {
         onSuccess: () => {
           toast.success("Success", {
@@ -55,7 +55,7 @@ const CreateUserScreen = () => {
         formFields={formValues}
         handleFormFieldChange={handleFormFieldChange}
         onSubmitHandler={createUserHandler}
-        errors={errors as any}
+        errors={errors}
         isLoading={isPending}
         isNew
         pageTitle="Create user information"
