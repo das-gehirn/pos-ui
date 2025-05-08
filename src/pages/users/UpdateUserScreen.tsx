@@ -29,9 +29,10 @@ const UpdateUserScreen = () => {
         updateFormFieldValue("userPermission", "*");
       }
     }
+
     updateFormFieldValue(key, value);
   };
- 
+
   const updateUserHandler = async () => {
     const { errorObj, formIsValid } = validate<typeof formValues>(formValues);
     if (!formIsValid) {
@@ -41,7 +42,10 @@ const UpdateUserScreen = () => {
       resetError();
     }
     const payload = objectDifference(data, formValues) as UserProps;
-
+    console.info({ payload });
+    if (Object.keys(payload).includes("userPermission")) {
+      payload.userPermission = formValues?.userPermission;
+    }
     mutate(
       { payload },
       {

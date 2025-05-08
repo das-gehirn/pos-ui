@@ -73,3 +73,7 @@ export interface OptionsProps {
 export type FieldKeys<T> = T extends object
   ? { [K in keyof T]: T[K] extends Function ? never : `${K & string}` | `${K & string}.${FieldKeys<T[K]>}` }[keyof T]
   : never;
+
+export type DeepOptional<T> = {
+  [K in keyof T]?: T[K] extends object ? DeepOptional<T[K]> : T[K];
+};

@@ -14,10 +14,7 @@ const DashboardSidebar = ({
 }) => {
   const { authUser } = useAuthStore();
 
-  const menuSidebarRoutesLinks = menuSidebarRoutes(
-    (authUser?.role || "") as UserRole,
-    authUser?.permission?.access || ""
-  );
+  const menuSidebarRoutesLinks = menuSidebarRoutes((authUser?.role || "") as UserRole, authUser?.userPermission || {});
   const generalSidebarRoutesLinks = generalSidebarRoutes(authUser?.role);
 
   return (
