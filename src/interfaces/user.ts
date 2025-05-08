@@ -1,4 +1,4 @@
-import { PermissionOperation, PermissionString } from "@/helpers/permission";
+import { PermissionOperation, PermissionResource } from "@/helpers/permission";
 import { AddressProps, DefaultPluginProps, PhoneProps } from ".";
 import { SettingsProps } from "./settings";
 
@@ -35,10 +35,8 @@ export interface UserProps extends DefaultPluginProps {
   isLoggedIn?: boolean;
 
   userPermission?: {
-    [key in PermissionString]?: PermissionOperation[];
+    [key in PermissionResource]?: PermissionOperation[];
   };
-  // virtuals
-  permission?: any;
   fullName?: string;
   accountId?: string;
   warehouseId?: string[];
