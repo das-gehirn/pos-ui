@@ -3,7 +3,7 @@ import {
   PermissionOperation,
   PermissionResource,
   hasPermission,
-  permissionOperations
+  permissionOperations,
 } from "@/helpers/permission";
 import useAuthStore from "@/store/auth";
 import { useMemo } from "react";
