@@ -6,10 +6,10 @@ import { useGeneralQuery } from "@/hooks/request/useGeneralQuery";
 import { GetManyProps } from "@/hooks/types";
 import { useSetQueryParam } from "@/hooks/useSetQueryParam";
 import { SalesProps } from "@/interfaces/sales";
-import useSalesStore from "@/store/sales";
+
 import { salesTableSchema } from "@/tableSchema/sales";
 import { printPDF } from "@/utils";
-import { FC, useEffect, useState } from "react";
+import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 interface SalesReportProps {
@@ -22,7 +22,6 @@ const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin, showSearch = true
   const [printLoading, setPrintLoading] = useState(false);
   const { queryObject } = useSetQueryParam();
   const navigate = useNavigate();
-  const { sales, setSales, setPaginator, paginator } = useSalesStore();
   const { axiosInstance } = useBaseRequestService({ useToken: true, tokenType: "accessToken" });
   const { data, isFetching } = useGeneralQuery<GetManyProps<SalesProps[]>>({
     queryKey: ["sales", queryObject],
@@ -57,12 +56,6 @@ const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin, showSearch = true
     }
   ];
 
-  useEffect(() => {
-    if (data?.data) {
-      setSales(data?.data);
-      setPaginator(data?.paginator);
-    }
-  }, [data]);
   return (
     <>
       {/* {isTodayReport && ( */}
@@ -75,8 +68,8 @@ const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin, showSearch = true
       {/* )} */}
       <Table
         columns={salesTableSchema({ isAdmin })}
-        data={sales || []}
-        paginator={paginator}
+        data={data?.data || []}
+        paginator={data?.paginator || null}
         actionButtons={rowActions}
         isLoading={isFetching || printLoading}
         loadingText={isFetching ? "Fetching sales report" : printLoading ? "Printing receipt" : ""}
