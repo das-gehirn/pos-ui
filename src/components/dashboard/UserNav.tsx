@@ -56,7 +56,6 @@ const UserNav = memo(() => {
       toast.error("Error", {
         description: getErrorMessageFromApi(error)
       });
-    } finally {
     }
   };
   return (
