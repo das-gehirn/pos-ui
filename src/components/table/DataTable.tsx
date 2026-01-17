@@ -142,7 +142,7 @@ export function DataTable<TData, TValue>({
   });
 
   return (
-    <div className="">
+    <>
       <DataTableToolbar
         table={table}
         showExportButton={showExportButton}
@@ -200,7 +200,7 @@ export function DataTable<TData, TValue>({
         </Table>
       </div>
       {!isLoading && data.length > 0 && <DataTablePagination table={table} paginator={paginator} />}
-    </div>
+    </>
   );
 }
 
