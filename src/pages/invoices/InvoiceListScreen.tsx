@@ -14,13 +14,14 @@ import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { InvoiceProps } from "@/interfaces/invoice";
 import { invoiceSchema, invoiceTableFilters } from "@/tableSchema/invoice";
+import { ActionButton } from "@/components/table/type";
 
 const InvoiceListScreen = () => {
   const { removeItemFromList } = useOptimisticUpdates();
-  const [selectedInvoice, setSelectedInvoice] = useState<Record<string, any>>({});
+  const [selectedInvoice, setSelectedInvoice] = useState<Record<string, string>>({});
   const invoiceId = selectedInvoice._id;
   const { queryObject } = useSetQueryParam();
-  const { mutate, isPending } = useGeneralMutation<InvoiceProps>({
+  const { mutate, isPending } = useGeneralMutation<null>({
     httpMethod: "delete",
     mutationKey: ["deleteInvoice", invoiceId],
     url: `/invoices/${invoiceId}`
@@ -40,7 +41,7 @@ const InvoiceListScreen = () => {
   const rowActions = [
     {
       label: "Delete",
-      action: (data: Record<string, any>) => {
+      action: (data: Record<string, string>) => {
         setOpenModal(true);
         setSelectedInvoice(data);
       },
@@ -48,7 +49,7 @@ const InvoiceListScreen = () => {
     },
     {
       label: "Edit",
-      action: (data: Record<string, any>) => {
+      action: (data: Record<string, string>) => {
         navigate(`/invoices/${data._id}/edit`);
       },
       show: canUpdateInvoice
@@ -73,14 +74,12 @@ const InvoiceListScreen = () => {
       {
         title: "Continue",
         action: async () => {
-          mutate(invoiceId, {
+          mutate({ payload: null }, {
             onSuccess: () => {
               setOpenModal(false);
               toast.success("Success", {
                 description: "Invoice deleted"
               });
-            },
-            onSettled() {
               return removeItemFromList(["invoices", queryObject], invoiceId);
             }
           });
@@ -91,7 +90,7 @@ const InvoiceListScreen = () => {
     ] as ModalActionButtonProps[]
   };
 
-  function handleEditRowActionClick(data: Record<string, any>) {
+  function handleEditRowActionClick(data: Record<string, string>) {
     if (canReadInvoice) {
       navigate(`/invoices/${data._id}`);
     }
@@ -124,7 +123,7 @@ const InvoiceListScreen = () => {
           showExportButton
           paginator={data?.paginator || null}
           filters={invoiceTableFilters}
-          actionButtons={rowActions}
+          actionButtons={rowActions as unknown as ActionButton[]}
           showSearchSelection
           searchSelectionOptions={[{ label: "Customer", value: "customerName" }]}
           allowRowSelect
