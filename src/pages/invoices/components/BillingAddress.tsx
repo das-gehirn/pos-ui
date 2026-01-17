@@ -1,5 +1,6 @@
 import { formatAddressToString, formatPhoneToString } from "@/helpers";
 import { AddressProps, PhoneProps } from "@/interfaces";
+import { isActualObject } from "@/utils";
 import { PencilLine } from "lucide-react";
 import { FC } from "react";
 import { Link } from "react-router-dom";
@@ -28,7 +29,7 @@ const BillingAddress: FC<BillingAddressProps> = ({
       <h1 className="text-2x font-medium">{name}</h1>
       <span className="text-xs">{email}</span>
       <div className="my-7 text-sm">
-        {address && formatAddressToString(address)}
+        {type === "to" && address && isActualObject(address) && formatAddressToString(address)}
         {type === "from" && "C0-0056-0664 Gomoa Ekwamkrom Police Barrier"}
         <p>{formatPhoneToString(phone)}</p>
         {showEditAddress && (
