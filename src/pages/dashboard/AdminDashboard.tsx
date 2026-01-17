@@ -1,14 +1,22 @@
 import DashboardLayout from "@/components/dashboard/Layout";
 import DashboardCard from "@/components/dashboard/shared/DashboardCard";
+import DashboardCardSkeleton from "@/components/dashboard/shared/DashboardCardSkeleton";
+import ChartSkeleton from "@/components/dashboard/shared/ChartSkeleton";
+import PortfolioCardSkeleton from "@/components/dashboard/shared/PortfolioCardSkeleton";
 import { Button } from "@/components/ui/button";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Skeleton } from "@/components/ui/skeleton";
 import { ApexOptions } from "apexcharts";
 import { Coins } from "lucide-react";
 import Chart from "react-apexcharts";
 // import SalesReport from "../sales/SalesReport";
 import { formatCurrency } from "@/helpers";
+import { useDashboardStats, useDashboardStatistics } from "@/hooks/request/useDashboardRequest";
 
 const Dashboard = () => {
+  const { dashboardStats, isLoading: isLoadingStats } = useDashboardStats();
+  const { statistics, isLoading: isLoadingStatistics } = useDashboardStatistics();
+  const salesPerMonthData = statistics?.salesPerMonth || [];
   const state = {
     options: {
       chart: {
@@ -21,84 +29,126 @@ const Dashboard = () => {
         }
       },
       xaxis: {
-        categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"]
+        categories: salesPerMonthData.map(item => item.month)
       }
     },
     series: [
       {
-        name: "series-1",
-        data: [30, 40, 45, 50, 49, 60, 70, 91, 56, 343, 565, 234]
+        name: "Sales",
+        data: salesPerMonthData.map(item => item.total)
       }
     ]
   };
+  const debtorsCreditors = statistics?.totalDebtorsCreditors;
   const plotOptions: ApexOptions = {
-    series: [44, 55],
+    series: [debtorsCreditors?.debtors.count || 0, debtorsCreditors?.creditors.count || 0],
     labels: ["Total Debtors", "Total Creditors"]
   };
   return (
     <DashboardLayout pageTitle="Dashboard" pageDescription="Here is the analysis for your store" showScrollToTopButton>
       <div className="grid lg:grid-cols-4 md:grid-cols-2 gap-4">
-        <DashboardCard amount={0} percentageDifference={0} title="May Total Sales" />
-        <DashboardCard amount={0} percentageDifference={0} title="May Total Expenditure" />
-        <DashboardCard amount={0} percentageDifference={-12} title="May Total Stock" isAmount={false} />
-        <DashboardCard amount={0} percentageDifference={9} title="May Total Profit" />
+        {isLoadingStats ? (
+          <>
+            <DashboardCardSkeleton />
+            <DashboardCardSkeleton />
+            <DashboardCardSkeleton />
+            <DashboardCardSkeleton />
+          </>
+        ) : (
+          <>
+            <DashboardCard 
+              amount={dashboardStats?.monthlySales ?? 0} 
+              percentageDifference={0} 
+              title="Monthly Sales" 
+            />
+            <DashboardCard 
+              amount={dashboardStats?.monthlyExpenditure ?? 0} 
+              percentageDifference={0} 
+              title="Monthly Expenditure" 
+            />
+            <DashboardCard 
+              amount={dashboardStats?.totalStockTaken ?? 0} 
+              percentageDifference={-12} 
+              title="Total Stock Taken" 
+              isAmount={false}
+              isNumber={true} 
+            />
+            <DashboardCard 
+              amount={dashboardStats?.monthlyProfit ?? 0} 
+              percentageDifference={9} 
+              title="Monthly Profit" 
+            />
+          </>
+        )}
       </div>
 
       <div className="grid lg:grid-cols-3 my-16 gap-5">
-        <div className="p-3 bg-white md:col-span-2">
-          <div className="flex items-center justify-between">
-            <h1 className="ml-4 text-2xl">Sales Per Month</h1>
-            <Select>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Select a year" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="apple">2024</SelectItem>
-                <SelectItem value="banana">2023</SelectItem>
-                <SelectItem value="blueberry">2022</SelectItem>
-                <SelectItem value="grapes">2021</SelectItem>
-                <SelectItem value="pineapple">2020</SelectItem>
-              </SelectContent>
-            </Select>
+        {isLoadingStatistics ? (
+          <div className="md:col-span-2">
+            <ChartSkeleton height={400} showHeader={true} />
           </div>
-          <Chart
-            options={{
-              ...state.options,
-              grid: {
-                show: false
-              },
-              stroke: { curve: "smooth", show: false },
-              dataLabels: { enabled: false },
-              tooltip: {
-                custom: function ({ seriesIndex, dataPointIndex, w }) {
-                  const data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
-                  return `<div style="padding:0.3rem; background:#1e7974; color: #ccc; font-size:12px;">$${data.toFixed(
-                    2
-                  )}</div>`;
-                }
-              },
-              plotOptions: {
-                bar: {
-                  borderRadiusApplication: "end",
-                  // borderRadius: 15,
-                  columnWidth: 30
-                }
-              },
-              //'#4089D0''#20B2AA',
-              colors: ["#20B2AA"]
-            }}
-            series={state.series}
-            type="bar"
-            width="100%"
-            height={400}
-          />
-        </div>
-        <div className="order-first md:order-last">
-          <div className="card min-h-[200px] bg-primary w-full rounded-md flex flex-col justify-between px-8 text-white mb-8">
+        ) : (
+          <div className="p-3 bg-white md:col-span-2">
+            <div className="flex items-center justify-between">
+              <h1 className="ml-4 text-2xl">Sales Per Month</h1>
+              <Select>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Select a year" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="apple">2024</SelectItem>
+                  <SelectItem value="banana">2023</SelectItem>
+                  <SelectItem value="blueberry">2022</SelectItem>
+                  <SelectItem value="grapes">2021</SelectItem>
+                  <SelectItem value="pineapple">2020</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <Chart
+              options={{
+                ...state.options,
+                grid: {
+                  show: false
+                },
+                stroke: { curve: "smooth", show: false },
+                dataLabels: { enabled: false },
+                tooltip: {
+                  custom: function ({ seriesIndex, dataPointIndex, w }) {
+                    const data = w.globals.initialSeries[seriesIndex].data[dataPointIndex];
+                    return `<div style="padding:0.3rem; background:#1e7974; color: #ccc; font-size:12px;">$${data.toFixed(
+                      2
+                    )}</div>`;
+                  }
+                },
+                plotOptions: {
+                  bar: {
+                    borderRadiusApplication: "end",
+                    // borderRadius: 15,
+                    columnWidth: 30
+                  }
+                },
+                //'#4089D0''#20B2AA',
+                colors: ["#20B2AA"]
+              }}
+              series={state.series}
+              type="bar"
+              width="100%"
+              height={400}
+            />
+          </div>
+        )}
+        {isLoadingStatistics ? (
+          <div className="order-first md:order-last space-y-8">
+            <PortfolioCardSkeleton />
+            <ChartSkeleton height={300} showHeader={true} />
+          </div>
+        ) : (
+          <div className="order-first md:order-last">
+            <div className="card min-h-[200px] bg-primary w-full rounded-md flex flex-col justify-between px-8 text-white mb-8">
             <div className="flex flex-1 items-center justify-between">
               <div className="space-y-3">
                 <p className="text-[12px]">Yearly Portfolio value</p>
-                <h1 className="text-xl font-medium">{formatCurrency({ value: 0 })}</h1>
+                <h1 className="text-xl font-medium">{formatCurrency({ value: statistics?.yearlyPortfolioValue?.total || 0 })}</h1>
               </div>
               <div className="border-[#cccccc2b] rounded-full w-10 h-10 border flex items-center justify-center">
                 <Coins className="text-green-500" />
@@ -106,16 +156,23 @@ const Dashboard = () => {
             </div>
             <div className="flex mt-3 justify-center flex-col flex-1">
               <div className="w-full bg-green-100 rounded-full h-2.5 dark:bg-gray-700">
-                <div className="bg-green-400 h-2.5 rounded-full w-[45%]"></div>
+                <div 
+                  className="bg-green-400 h-2.5 rounded-full" 
+                  style={{ 
+                    width: `${statistics?.yearlyPortfolioValue?.total 
+                      ? (statistics.yearlyPortfolioValue.profit / statistics.yearlyPortfolioValue.total) * 100 
+                      : 0}%` 
+                  }}
+                ></div>
               </div>
               <div className="flex my-3 gap-3">
                 <div className="flex text-[12px] items-center gap-1">
                   <span className="h-2 w-2 bg-green-400 block rounded-full"></span>
-                  <p>Profit: {formatCurrency({ value: 0 })}</p>
+                  <p>Profit: {formatCurrency({ value: statistics?.yearlyPortfolioValue?.profit || 0 })}</p>
                 </div>
                 <div className="flex text-[12px] items-center gap-1">
                   <span className="h-2 w-2 bg-green-100 block rounded-full"></span>
-                  <p>Loss: {formatCurrency({ value: 0 })}</p>
+                  <p>Loss: {formatCurrency({ value: statistics?.yearlyPortfolioValue?.loss || 0 })}</p>
                 </div>
               </div>
             </div>
@@ -150,7 +207,7 @@ const Dashboard = () => {
                   }
                 },
                 xaxis: {
-                  categories: ["Jan", "Feb", "Mar", "Apr", "May"],
+                  categories: statistics?.profitPerMonth?.map(item => item.month) || [],
                   tooltip: {
                     enabled: false
                   }
@@ -182,179 +239,59 @@ const Dashboard = () => {
               }}
               series={[
                 {
-                  name: "Series 1",
-                  data: [49005, 45452, 345458, 254544, 536563]
+                  name: "Profit",
+                  data: statistics?.profitPerMonth?.map(item => item.profit) || []
                 }
               ]}
             />
           </div>
         </div>
+        )}
       </div>
       <div className="md:flex my-16 gap-5 space-y-10 md:space-y-0">
-        <div className="p-2 bg-white md:w-[60%]">
-          <h1 className="ml-4 text-2xl">Sales Target Per Month</h1>
-          <Chart
+        {isLoadingStatistics ? (
+          <>
+            <div className="md:w-[60%]">
+              <ChartSkeleton height={400} showHeader={false} />
+            </div>
+            <div className="flex-1 md:w-[40%] space-y-4">
+              <div className="bg-white p-5">
+                <Skeleton className="h-6 w-48 mb-10" />
+                <div className="flex items-center justify-between mb-10">
+                  <div>
+                    <Skeleton className="h-16 w-20 mb-2" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                  <div>
+                    <Skeleton className="h-16 w-20 mb-2" />
+                    <Skeleton className="h-3 w-24" />
+                  </div>
+                </div>
+                <Skeleton className="w-full h-[200px] rounded-full" />
+              </div>
+            </div>
+          </>
+        ) : (
+          <>
+            <div className="p-2 bg-white md:w-[60%]">
+              <h1 className="ml-4 text-2xl">Sales Target Per Month</h1>
+              <Chart
             series={[
               {
                 name: "Actual",
-                data: [
-                  {
-                    x: "Jan",
-                    y: 12,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 14,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Feb",
-                    y: 44,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 54,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Mar",
-                    y: 54,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 52,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Apr",
-                    y: 66,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 61,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "May",
-                    y: 81,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 66,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Jun",
-                    y: 67,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 70,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Jul",
-                    y: 67,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 70,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Aug",
-                    y: 67,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 70,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Sep",
-                    y: 67,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 70,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Oct",
-                    y: 67,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 70,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Nov",
-                    y: 67,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 70,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  },
-                  {
-                    x: "Nov",
-                    y: 67,
-                    goals: [
-                      {
-                        name: "Expected",
-                        value: 70,
-                        strokeWidth: 17.5,
-                        strokeHeight: 4,
-                        strokeColor: "#775DD0"
-                      }
-                    ]
-                  }
-                ]
+                data: statistics?.salesTargetPerMonth?.map(item => ({
+                  x: item.month,
+                  y: item.actual,
+                  goals: [
+                    {
+                      name: "Expected",
+                      value: item.expected,
+                      strokeWidth: 17.5,
+                      strokeHeight: 4,
+                      strokeColor: "#775DD0"
+                    }
+                  ]
+                })) || []
               }
             ]}
             options={{
@@ -404,7 +341,7 @@ const Dashboard = () => {
               },
               dataLabels: { enabled: false },
               xaxis: {
-                categories: ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"],
+                categories: statistics?.salesTargetPerMonth?.map(item => item.month) || [],
                 tooltip: {
                   enabled: true
                 }
@@ -429,11 +366,11 @@ const Dashboard = () => {
 
             <div className="card flex items-center justify-between">
               <div className="data">
-                <h1 className="font-medium text-5xl md:text-7xl">0</h1>
+                <h1 className="font-medium text-5xl md:text-7xl">{debtorsCreditors?.debtors.count || 0}</h1>
                 <p className="text-sm">Total Debtors</p>
               </div>
               <div className="data">
-                <h1 className="font-medium text-5xl md:text-7xl">0</h1>
+                <h1 className="font-medium text-5xl md:text-7xl">{debtorsCreditors?.creditors.count || 0}</h1>
                 <p className="text-sm">Total Creditors</p>
               </div>
             </div>
@@ -449,15 +386,10 @@ const Dashboard = () => {
             type="donut"
           />
         </div>
+          </>
+        )}
       </div>
 
-      <div className="space-y-10">
-        <div className="bg-white p-5">
-          {/* <h1>Today's Sales</h1>
-          <SalesReport isAdmin showSearch={false} /> */}
-        </div>
-        <div className="bg-white p-5">Total Debtors</div>
-      </div>
     </DashboardLayout>
   );
 };
