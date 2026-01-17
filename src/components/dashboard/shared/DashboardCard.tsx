@@ -7,8 +7,9 @@ interface DashboardCardProps {
   amount: number;
   percentageDifference: number;
   isAmount?: boolean;
+  isNumber?: boolean;
 }
-const DashboardCard: FC<DashboardCardProps> = ({ amount, percentageDifference, title, isAmount = true }) => {
+const DashboardCard: FC<DashboardCardProps> = ({ amount, percentageDifference, title, isAmount = true, isNumber = false }) => {
   let color = "";
   if (percentageDifference > 0) {
     color = "text-green-600";
@@ -16,6 +17,10 @@ const DashboardCard: FC<DashboardCardProps> = ({ amount, percentageDifference, t
   if (percentageDifference < 0) {
     color = "text-red-600";
   }
+
+  const formatNumber = (value: number) => {
+    return new Intl.NumberFormat('en-US').format(value);
+  };
   return (
     <div
       className="space-y-2 relative p-6 bg-white  rounded-sm border-gray-100 border"
@@ -27,7 +32,15 @@ const DashboardCard: FC<DashboardCardProps> = ({ amount, percentageDifference, t
         </div>
         <p className="text-sm flex-1">{title}</p>
       </div>
-      <h1 className="text-xl font-medium">{isAmount ? <span>{formatCurrency({ value: amount })}</span> : amount}</h1>
+      <h1 className="text-xl font-medium">
+        {isAmount ? (
+          <span>{formatCurrency({ value: amount })}</span>
+        ) : isNumber ? (
+          <span>{formatNumber(amount)}</span>
+        ) : (
+          amount
+        )}
+      </h1>
       <div className="flex items-center font-light text-[12px] gap-2">
         <p className={`flex items-center ${color} gap-1`}>
           {percentageDifference > 0 && <TrendingUp size={16} />}
