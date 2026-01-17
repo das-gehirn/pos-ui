@@ -85,7 +85,7 @@ const InvoiceEditFields: FC<InvoiceEditFieldsProps> = ({
   });
   const { data: products, isFetching: isFetchingProducts } = useGeneralQuery<GetManyProps<ProductProps[]>>({
     queryKey: ["products"],
-    url: "//products/general",
+    url: "/products/general",
     query: { deleted: false },
     enabled: true
   });
