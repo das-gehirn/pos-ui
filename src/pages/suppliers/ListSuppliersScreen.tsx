@@ -8,12 +8,13 @@ import { useOptimisticUpdates } from "@/hooks/request/useOptimisticUpdates";
 import { GetManyProps } from "@/hooks/types";
 import { useSetQueryParam } from "@/hooks/useSetQueryParam";
 import { usePermission } from "@/hooks/usePermission"; // Import usePermission
-import { ModalActionButtonProps } from "@/interfaces";
+import { ModalActionButtonProps, OptionsProps } from "@/interfaces";
 import { SupplierProps } from "@/interfaces/supplier";
 import { suppliersTableSchema } from "@/tableSchema/suppliers";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import ExportModal from "@/components/table/ExportModal";
 
 const ListSuppliersScreen = () => {
   const { removeItemFromList } = useOptimisticUpdates();
@@ -35,6 +36,7 @@ const ListSuppliersScreen = () => {
   const navigate = useNavigate();
 
   const { canCreateSuppliers, canUpdateSuppliers, canDeleteSuppliers } = usePermission();
+  const [openExportModal, setOpenExportModal] = useState(false);
 
   const rowActions = [
     {
@@ -97,6 +99,42 @@ const ListSuppliersScreen = () => {
       }
     : undefined;
 
+  // Prepare columns options for export
+  const columnsOptions: OptionsProps[] = useMemo(() => {
+    const columnLabels: Record<string, string> = {
+      name: "Supplier Name",
+      email: "Supplier Email",
+      phone: "Supplier Phone",
+      status: "Status",
+      createdAt: "Created At"
+    };
+
+    return suppliersTableSchema
+      .filter((column) => "accessorKey" in column && column.accessorKey)
+      .map((column) => {
+        const accessorKey = (column as any).accessorKey as string;
+        const label = columnLabels[accessorKey] || accessorKey;
+        return {
+          label,
+          value: accessorKey
+        };
+      });
+  }, []);
+
+  // Create table schema for export
+  const tableSchema = useMemo(() => {
+    const schema: Record<string, { dataType: "text" | "number" }> = {};
+    suppliersTableSchema.forEach((column) => {
+      if ("accessorKey" in column && column.accessorKey) {
+        const accessorKey = column.accessorKey as string;
+        schema[accessorKey] = {
+          dataType: "text"
+        };
+      }
+    });
+    return schema;
+  }, []);
+
   return (
     <DashboardLayout pageTitle="Suppliers" actionButton={actionButtonProps}>
       <Modal
@@ -118,6 +156,14 @@ const ListSuppliersScreen = () => {
           allowRowSelect
           handleRowClick={handleEditRowActionClick}
           showSelectColumns
+          onExportClick={() => setOpenExportModal(true)}
+        />
+        <ExportModal
+          columnsOptions={columnsOptions}
+          tableSchema={tableSchema}
+          service="suppliers"
+          openExportModal={openExportModal}
+          onClose={() => setOpenExportModal(false)}
         />
       </Container>
     </DashboardLayout>
