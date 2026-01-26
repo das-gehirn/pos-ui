@@ -7,14 +7,15 @@ import { useGeneralQuery } from "@/hooks/request/useGeneralQuery";
 import { useOptimisticUpdates } from "@/hooks/request/useOptimisticUpdates";
 import { GetManyProps } from "@/hooks/types";
 import { useSetQueryParam } from "@/hooks/useSetQueryParam";
-import { ModalActionButtonProps } from "@/interfaces";
+import { ModalActionButtonProps, OptionsProps } from "@/interfaces";
 import { ProductProps } from "@/interfaces/products";
 import { productTableFilters, productTableSchema } from "@/tableSchema/products";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { usePermission } from "@/hooks/usePermission";
 import { formatCurrency } from "@/helpers";
+import ExportModal from "@/components/table/ExportModal";
 
 const ProductListsScreen = () => {
   const { removeItemFromList } = useOptimisticUpdates();
@@ -35,6 +36,7 @@ const ProductListsScreen = () => {
 
   const { canCreateProducts, canUpdateProducts, canDeleteProducts } = usePermission(); // Assuming usePermission provides these checks
   const [openModal, setOpenModal] = useState(false);
+  const [openExportModal, setOpenExportModal] = useState(false);
   const navigate = useNavigate();
 
   const rowActions = [
@@ -101,6 +103,55 @@ const ProductListsScreen = () => {
   const stockTotal = products.reduce((prev, current) => {
     return (current.totalProductPrice || 0) + prev;
   }, 0)
+
+  // Prepare columns options for export
+  const columnsOptions: OptionsProps[] = useMemo(() => {
+    // Map of accessorKey to display labels
+    const columnLabels: Record<string, string> = {
+      name: "Product Name",
+      codeId: "Product Code",
+      brandId: "Product Brand",
+      categoryId: "Category",
+      quantity: "Quantity",
+      productUnitPrice: "Unit Price",
+      productSellingPrice: "Selling Price",
+      totalProductPrice: "Total Stock Amount",
+      status: "Status",
+      createdAt: "Created At"
+    };
+
+    return productTableSchema
+      .filter((column) => "accessorKey" in column && column.accessorKey)
+      .map((column) => {
+        const accessorKey = (column as any).accessorKey as string;
+        const label = columnLabels[accessorKey] || accessorKey;
+        return {
+          label,
+          value: accessorKey
+        };
+      });
+  }, []);
+
+  // Create table schema for export (mapping column keys to data types)
+  const tableSchema = useMemo(() => {
+    const schema: Record<string, { dataType: "text" | "number" }> = {};
+    productTableSchema.forEach((column) => {
+      if ("accessorKey" in column && column.accessorKey) {
+        const accessorKey = column.accessorKey as string;
+        // Determine data type based on column key
+        const numberColumns = [
+          "quantity",
+          "productUnitPrice",
+          "productSellingPrice",
+          "totalProductPrice"
+        ];
+        schema[accessorKey] = {
+          dataType: numberColumns.includes(accessorKey) ? "number" : "text"
+        };
+      }
+    });
+    return schema;
+  }, []);
   return (
     <DashboardLayout pageTitle="Products List" actionButton={actionButton}>
       <Modal
@@ -130,6 +181,14 @@ const ProductListsScreen = () => {
             { label: "Product Code", value: "productCodeId" },
             { label: "All Fields", value: "" }
           ]}
+          onExportClick={() => setOpenExportModal(true)}
+        />
+        <ExportModal
+          columnsOptions={columnsOptions}
+          tableSchema={tableSchema}
+          service="products"
+          openExportModal={openExportModal}
+          onClose={() => setOpenExportModal(false)}
         />
       </Container>
     </DashboardLayout>
