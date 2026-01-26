@@ -8,17 +8,19 @@ import { ExpenditureProps } from "@/interfaces/expenditure";
 import { expenditureTableFilters, expenditureTableSchema } from "@/tableSchema/expenditure";
 import { usePermission } from "@/hooks/usePermission";
 import { useOptimisticUpdates } from "@/hooks/request/useOptimisticUpdates";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useGeneralMutation } from "@/hooks/request/useGeneralMutation";
 import { useNavigate } from "react-router-dom";
-import { ModalActionButtonProps } from "@/interfaces";
+import { ModalActionButtonProps, OptionsProps } from "@/interfaces";
 import { toast } from "sonner";
 import Modal from "@/components/Modal";
+import ExportModal from "@/components/table/ExportModal";
 
 const ExpenditureListViewScreen = () => {
   const [selectedExpenditure, setSelectedExpenditure] = useState<Record<string, any>>({});
   const navigate = useNavigate();
   const [openModal, setOpenModal] = useState(false);
+  const [openExportModal, setOpenExportModal] = useState(false);
 
   const { mutate, isPending } = useGeneralMutation<ExpenditureProps>({
     httpMethod: "delete",
@@ -96,6 +98,49 @@ const ExpenditureListViewScreen = () => {
           disabled: isFetching || !canCreateExpenditures
         }
       };
+
+  // Prepare columns options for export
+  const columnsOptions: OptionsProps[] = useMemo(() => {
+    const columnLabels: Record<string, string> = {
+      item: "Item",
+      quantity: "Quantity",
+      pricePerQuantity: "Price per quantity",
+      totalAmount: "Total Amount",
+      modeOfPayment: "Mode of Payment",
+      type: "Type",
+      expenseHead: "Expense Head",
+      subExpense: "Sub expense",
+      createdBy: "Created By",
+      createdAt: "Created At"
+    };
+
+    return expenditureTableSchema
+      .filter((column) => "accessorKey" in column && column.accessorKey)
+      .map((column) => {
+        const accessorKey = (column as any).accessorKey as string;
+        const label = columnLabels[accessorKey] || accessorKey;
+        return {
+          label,
+          value: accessorKey
+        };
+      });
+  }, []);
+
+  // Create table schema for export
+  const tableSchema = useMemo(() => {
+    const schema: Record<string, { dataType: "text" | "number" }> = {};
+    expenditureTableSchema.forEach((column) => {
+      if ("accessorKey" in column && column.accessorKey) {
+        const accessorKey = column.accessorKey as string;
+        const numberColumns = ["quantity", "pricePerQuantity", "totalAmount"];
+        schema[accessorKey] = {
+          dataType: numberColumns.includes(accessorKey) ? "number" : "text"
+        };
+      }
+    });
+    return schema;
+  }, []);
+
   return (
     <DashboardLayout isLoading={isFetching} pageTitle="Expenditure List" actionButton={actionButton}>
       <Modal
@@ -115,6 +160,14 @@ const ExpenditureListViewScreen = () => {
           allowRowSelect
           showExportButton
           loadingText="Fetching Expenditure"
+          onExportClick={() => setOpenExportModal(true)}
+        />
+        <ExportModal
+          columnsOptions={columnsOptions}
+          tableSchema={tableSchema}
+          service="expenditures"
+          openExportModal={openExportModal}
+          onClose={() => setOpenExportModal(false)}
         />
       </PageContainer>
     </DashboardLayout>
