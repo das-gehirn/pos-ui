@@ -23,8 +23,9 @@ const Table = ({
   isLoading,
   loadingText,
   showSearch,
-  tableActions
-}: TableProps) => {
+  tableActions,
+  onExportClick
+}: TableProps & { onExportClick?: () => void }) => {
   return (
     <div className="w-full">
       <div className="flex items-center justify-between space-y-2">
@@ -51,6 +52,7 @@ const Table = ({
         loadingText={loadingText}
         showSearch={showSearch}
         tableActions={tableActions}
+        onExportClick={onExportClick}
       />
     </div>
   );
