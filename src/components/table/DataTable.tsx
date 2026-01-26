@@ -37,8 +37,9 @@ export function DataTable<TData, TValue>({
   isLoading,
   loadingText,
   showSearch,
-  tableActions
-}: DataTableProps<TData, TValue>) {
+  tableActions,
+  onExportClick
+}: DataTableProps<TData, TValue> & { onExportClick?: () => void }) {
   const [rowSelection, setRowSelection] = useState({});
   const [columnVisibility, setColumnVisibility] = useState<VisibilityState>({});
   const [columnFilters, setColumnFilters] = useState<ColumnFiltersState>([]);
@@ -152,6 +153,7 @@ export function DataTable<TData, TValue>({
         showSelectColumns={showSelectColumns}
         showSearch={showSearch}
         tableActions={tableActions}
+        onExportClick={onExportClick}
       />
       <div className="rounded border border-[#f6f6f6] border-md mt-5">
         <Table className="-striped -highlight">

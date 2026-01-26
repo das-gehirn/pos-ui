@@ -14,11 +14,13 @@ import {
 interface DataTableViewOptionsProps<TData> {
   table: Table<TData>;
   showExportButton?: boolean;
+  onExportClick?: () => void;
 }
 
 export function DataTableViewOptions<TData>({
   table,
   showExportButton = false,
+  onExportClick,
 }: DataTableViewOptionsProps<TData>) {
   return (
     <div className="flex gap-3">
@@ -44,7 +46,7 @@ export function DataTableViewOptions<TData>({
             )
             .map((column) => {
               const columnDef = column.columnDef ;
-              //@ts-ignore
+              //@ts-expect-error - header function may return JSX with title prop
               const title = (typeof columnDef.header === 'function' ? columnDef.header({column})?.props.title : column.id);              
               return (
                 <DropdownMenuCheckboxItem
@@ -61,7 +63,12 @@ export function DataTableViewOptions<TData>({
       </DropdownMenu>
       {showExportButton && (
         <div className="export-button">
-          <Button variant="outline" size="sm" className="bg-primary text-white">
+          <Button 
+            variant="outline" 
+            size="sm" 
+            className="bg-primary text-white"
+            onClick={onExportClick}
+          >
             <DownloadIcon className="mr-2 h-4 w-4" />
             Export
           </Button>
