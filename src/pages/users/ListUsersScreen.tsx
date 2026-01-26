@@ -6,9 +6,10 @@ import { useSetQueryParam } from "@/components/table/hooks/useSetQueryParam";
 import { useDeleteUserMutation, useFetchUsersQuery } from "@/hooks/request/useUserRequest";
 import { ModalActionButtonProps, OptionsProps } from "@/interfaces";
 import { userTableFilters, usersTableSchema } from "@/tableSchema/users";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import ExportModal from "@/components/table/ExportModal";
 
 const ListUsersScreen = () => {
   const { queryObject } = useSetQueryParam();
@@ -16,6 +17,7 @@ const ListUsersScreen = () => {
   const { data, isFetching } = useFetchUsersQuery(queryObject);
   const { isPending, mutate } = useDeleteUserMutation(queryObject);
   const [openModal, setOpenModal] = useState(false);
+  const [openExportModal, setOpenExportModal] = useState(false);
   const [selectedUser, setSelectedUser] = useState<Record<string, any>>({});
   const searchSelectionOptions: OptionsProps[] = [
     { label: "All Fields", value: "" },
@@ -74,6 +76,43 @@ const ListUsersScreen = () => {
     navigate(`/users/${data.id}`);
   }
 
+  // Prepare columns options for export
+  const columnsOptions: OptionsProps[] = useMemo(() => {
+    const columnLabels: Record<string, string> = {
+      firstName: "First name",
+      lastName: "Last name",
+      email: "Email",
+      role: "Role",
+      gender: "Gender",
+      status: "Status"
+    };
+
+    return usersTableSchema
+      .filter((column) => "accessorKey" in column && column.accessorKey)
+      .map((column) => {
+        const accessorKey = (column as any).accessorKey as string;
+        const label = columnLabels[accessorKey] || accessorKey;
+        return {
+          label,
+          value: accessorKey
+        };
+      });
+  }, []);
+
+  // Create table schema for export
+  const tableSchema = useMemo(() => {
+    const schema: Record<string, { dataType: "text" | "number" }> = {};
+    usersTableSchema.forEach((column) => {
+      if ("accessorKey" in column && column.accessorKey) {
+        const accessorKey = column.accessorKey as string;
+        schema[accessorKey] = {
+          dataType: "text"
+        };
+      }
+    });
+    return schema;
+  }, []);
+
   return (
     <DashboardLayout
       pageTitle="Users List"
@@ -103,6 +142,14 @@ const ListUsersScreen = () => {
           showSelectColumns
           showSearchSelection
           tableActions={[{ action: () => {}, label: "Export Users", show: true }]}
+          onExportClick={() => setOpenExportModal(true)}
+        />
+        <ExportModal
+          columnsOptions={columnsOptions}
+          tableSchema={tableSchema}
+          service="users"
+          openExportModal={openExportModal}
+          onClose={() => setOpenExportModal(false)}
         />
       </PageContainer>
     </DashboardLayout>
