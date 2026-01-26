@@ -11,14 +11,16 @@ import { usePermission } from "@/hooks/usePermission";
 import { ModalActionButtonProps, OptionsProps } from "@/interfaces";
 import { CustomerProps } from "@/interfaces/customer";
 import { customerTableSchema } from "@/tableSchema/customers";
-import { useState } from "react";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
+import ExportModal from "@/components/table/ExportModal";
 
 const CustomersListScreen = () => {
   const { canDeleteCustomers, canUpdateCustomers } = usePermission();
   const { removeItemFromList } = useOptimisticUpdates();
   const [openModal, setOpenModal] = useState(false);
+  const [openExportModal, setOpenExportModal] = useState(false);
   const [selectedCustomer, setSelectedCustomer] = useState<Record<string, any>>({});
   const { queryObject } = useSetQueryParam();
   const navigate = useNavigate();
@@ -95,6 +97,44 @@ const CustomersListScreen = () => {
     }
   }
 
+  // Prepare columns options for export
+  const columnsOptions: OptionsProps[] = useMemo(() => {
+    const columnLabels: Record<string, string> = {
+      firstName: "First name",
+      lastName: "Last name",
+      email: "Email",
+      gender: "Gender",
+      dateOfBirth: "Date of Birth",
+      createdBy: "Created By",
+      createdAt: "Created At"
+    };
+
+    return customerTableSchema
+      .filter((column) => "accessorKey" in column && column.accessorKey)
+      .map((column) => {
+        const accessorKey = (column as any).accessorKey as string;
+        const label = columnLabels[accessorKey] || accessorKey;
+        return {
+          label,
+          value: accessorKey
+        };
+      });
+  }, []);
+
+  // Create table schema for export
+  const tableSchema = useMemo(() => {
+    const schema: Record<string, { dataType: "text" | "number" }> = {};
+    customerTableSchema.forEach((column) => {
+      if ("accessorKey" in column && column.accessorKey) {
+        const accessorKey = column.accessorKey as string;
+        schema[accessorKey] = {
+          dataType: "text"
+        };
+      }
+    });
+    return schema;
+  }, []);
+
   return (
     <DashboardLayout
       pageTitle="Customers List"
@@ -120,6 +160,14 @@ const CustomersListScreen = () => {
           searchSelectionOptions={searchSelectionOptions}
           showSelectColumns
           showSearchSelection
+          onExportClick={() => setOpenExportModal(true)}
+        />
+        <ExportModal
+          columnsOptions={columnsOptions}
+          tableSchema={tableSchema}
+          service="customers"
+          openExportModal={openExportModal}
+          onClose={() => setOpenExportModal(false)}
         />
       </Container>
     </DashboardLayout>
