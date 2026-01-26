@@ -8,13 +8,14 @@ import { useOptimisticUpdates } from "@/hooks/request/useOptimisticUpdates";
 import { GetManyProps } from "@/hooks/types";
 import { useSetQueryParam } from "@/hooks/useSetQueryParam";
 import { usePermission } from "@/hooks/usePermission";
-import { ModalActionButtonProps } from "@/interfaces";
-import { useState } from "react";
+import { ModalActionButtonProps, OptionsProps } from "@/interfaces";
+import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
 import { InvoiceProps } from "@/interfaces/invoice";
 import { invoiceSchema, invoiceTableFilters } from "@/tableSchema/invoice";
 import { ActionButton } from "@/components/table/type";
+import ExportModal from "@/components/table/ExportModal";
 
 const InvoiceListScreen = () => {
   const { removeItemFromList } = useOptimisticUpdates();
@@ -36,6 +37,7 @@ const InvoiceListScreen = () => {
   const { canCreateInvoice, canDeleteInvoice, canUpdateInvoice, canReadInvoice } = usePermission();
 
   const [openModal, setOpenModal] = useState(false);
+  const [openExportModal, setOpenExportModal] = useState(false);
   const navigate = useNavigate();
 
   const rowActions = [
@@ -106,6 +108,44 @@ const InvoiceListScreen = () => {
       }
     : undefined;
 
+  // Prepare columns options for export
+  const columnsOptions: OptionsProps[] = useMemo(() => {
+    const columnLabels: Record<string, string> = {
+      invoiceNumber: "Invoice Number",
+      customerId: "Customer",
+      totalAmount: "Total Amount",
+      createdBy: "Created By",
+      createdAt: "Created At",
+      status: "Status"
+    };
+
+    return invoiceSchema
+      .filter((column) => "accessorKey" in column && column.accessorKey)
+      .map((column) => {
+        const accessorKey = (column as any).accessorKey as string;
+        const label = columnLabels[accessorKey] || accessorKey;
+        return {
+          label,
+          value: accessorKey
+        };
+      });
+  }, []);
+
+  // Create table schema for export
+  const tableSchema = useMemo(() => {
+    const schema: Record<string, { dataType: "text" | "number" }> = {};
+    invoiceSchema.forEach((column) => {
+      if ("accessorKey" in column && column.accessorKey) {
+        const accessorKey = column.accessorKey as string;
+        const numberColumns = ["totalAmount"];
+        schema[accessorKey] = {
+          dataType: numberColumns.includes(accessorKey) ? "number" : "text"
+        };
+      }
+    });
+    return schema;
+  }, []);
+
   return (
     <DashboardLayout pageTitle="Invoices" actionButton={actionButtonProps}>
       <Modal
@@ -129,6 +169,14 @@ const InvoiceListScreen = () => {
           allowRowSelect
           handleRowClick={handleEditRowActionClick}
           showSelectColumns
+          onExportClick={() => setOpenExportModal(true)}
+        />
+        <ExportModal
+          columnsOptions={columnsOptions}
+          tableSchema={tableSchema}
+          service="invoice"
+          openExportModal={openExportModal}
+          onClose={() => setOpenExportModal(false)}
         />
       </Container>
     </DashboardLayout>
