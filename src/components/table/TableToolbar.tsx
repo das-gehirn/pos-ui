@@ -23,6 +23,7 @@ interface DataTableToolbarProps<TData> {
   showSelectColumns?: boolean;
   showSearch?: boolean;
   tableActions?: TableActionProps[];
+  onExportClick?: () => void;
 }
 export function DataTableToolbar<TData>({
   table,
@@ -32,7 +33,8 @@ export function DataTableToolbar<TData>({
   showSearchSelection,
   showSelectColumns = true,
   showSearch = true,
-  tableActions
+  tableActions,
+  onExportClick
 }: DataTableToolbarProps<TData>) {
   const isFiltered = table.getState().columnFilters.length > 0;
   const { setQueryParam, getQueryParam } = useSetQueryParam();
@@ -77,7 +79,7 @@ export function DataTableToolbar<TData>({
             />
           )}
         </div>
-        {showSelectColumns && <DataTableViewOptions table={table} showExportButton={showExportButton} />}
+        {showSelectColumns && <DataTableViewOptions table={table} showExportButton={showExportButton} onExportClick={onExportClick} />}
       </div>
       <div className="flex justify-between items-center flex-wrap">
         {/* TABLE FILTERS */}
