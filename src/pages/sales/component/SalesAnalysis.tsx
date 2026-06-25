@@ -50,7 +50,7 @@ const SalesAnalysis = () => {
   });
   const { data: singleSalesAnalysis, isFetching: isFetchingSingleAnalysis } = useGeneralQuery<
     GetManyProps<{
-      salesByProduct: { productName: string; totalQuantity: number; totalPrice: number }[];
+      salesByProduct: { productName: string; category?: string; totalQuantity: number; totalPrice: number }[];
       salesByCategoryReport: {
         category: string;
         totalItemsSold: number;
@@ -64,13 +64,15 @@ const SalesAnalysis = () => {
     enabled: Boolean(selectedDate),
     query: { date: selectedDate || "" }
   });
-  // const { data: som } = useGeneralQuery<GetManyProps<{ name: string; totalQuantity: number; totalPrice: number }>>({
-  //   queryKey: ["gfdghfgfhgf", selectedDate],
-  //   url: "/sales/by/cashier",
-  //   requireAuth: true,
-  //   enabled: Boolean(selectedDate),
-  //   query: { date: selectedDate || "" }
-  // });
+  const { data: salesByCashier } = useGeneralQuery<
+    GetManyProps<{ name: string; totalQuantity: number; totalSales: number }[]>
+  >({
+    queryKey: ["salesByCashier", selectedDate],
+    url: "/sales/by/cashier",
+    requireAuth: true,
+    enabled: Boolean(selectedDate),
+    query: { date: selectedDate || "" }
+  });
 
   useEffect(() => {
     if (queryObject && queryObject.year && queryObject.month) {
@@ -294,8 +296,10 @@ const SalesAnalysis = () => {
                   <div className="my-10">
                     {singleSalesAnalysis?.data && singleSalesAnalysis.data.salesByProduct?.length > 0 && (
                       <SalesAnalysisListView
+                        selectedDate={selectedDate}
                         salesByProduct={singleSalesAnalysis.data?.salesByProduct || []}
                         salesByCategoryReport={singleSalesAnalysis?.data?.salesByCategoryReport || []}
+                        salesByCashier={salesByCashier?.data || []}
                       />
                     )}
                   </div>
