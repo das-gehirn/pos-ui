@@ -8,7 +8,7 @@ import { useSetQueryParam } from "@/hooks/useSetQueryParam";
 import { SalesProps } from "@/interfaces/sales";
 
 import { salesTableSchema } from "@/tableSchema/sales";
-import { printPDF } from "@/utils";
+import { printReceipt } from "@/utils/receipt";
 import { FC, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { toast } from "sonner";
@@ -41,7 +41,7 @@ const SalesReport: FC<SalesReportProps> = ({ filters, isAdmin, showSearch = true
         try {
           setPrintLoading(true);
           const { data: response } = await axiosInstance.get(`/pdf/print/${data.id}/sales-receipt`);
-          printPDF(response.response);
+          await printReceipt(response.response);
           toast.success("Success", {
             description: "Sales receipt printed"
           });

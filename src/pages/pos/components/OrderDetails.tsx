@@ -17,7 +17,8 @@ import { defaultCustomer } from "@/defaults";
 import { useFormFieldUpdate } from "@/hooks/useFormFieldUpdate";
 import { HandlerProps } from "@/components/customFields/type";
 import { formatCurrency, objectDifference } from "@/helpers";
-import { GENDER_OPTIONS, calculateDiscountAmount, printPDF } from "@/utils";
+import { GENDER_OPTIONS, calculateDiscountAmount } from "@/utils";
+import { printReceipt, type ReceiptData } from "@/utils/receipt";
 import PayNowModal from "./PayNowModal";
 import { pick, set } from "lodash";
 import { toast } from "sonner";
@@ -119,7 +120,7 @@ const OrderDetails = () => {
         async onSuccess(data) {
           setOpenModal(false);
           if (modalType === "payment") {
-            printPDF(data?.data?.response);
+            await printReceipt(data?.data?.response as ReceiptData);
           }
 
           resetState();

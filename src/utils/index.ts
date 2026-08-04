@@ -121,29 +121,6 @@ export function formatQueryParams(params?: Record<string, any>): string {
   }
   return formattedQueryString;
 }
-export const printPDF = async (base64: any) => {
-  // Decode base64 string to binary data
-  const { atob, URL, open } = window;
-  const binaryString = atob(base64);
-  const len = binaryString.length;
-  const bytes = new Uint8Array(len);
-  for (let i = 0; i < len; i++) {
-    bytes[i] = binaryString.charCodeAt(i);
-  }
-
-  // Create a Blob from the binary data
-  const blob = new Blob([bytes], { type: "application/pdf" });
-
-  // Create a URL for the Blob
-  const url = URL.createObjectURL(blob);
-
-  // Open a new tab and display the PDF
-  const newTab = open(url, "_blank");
-  if (!newTab) {
-    // Handle the case where popups are blocked
-    alert("Please allow popups for this website");
-  }
-};
 export function downloadDocument(pdf: string, fileName: string) {
   const linkSource = `data:application/pdf;base64,${pdf}`;
 
